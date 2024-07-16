@@ -17,12 +17,22 @@
         "tsConfig": "apps/this-film-finder/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
+          "apps/this-film-finder/src/app/favicon.ico",
           {
             "glob": "**/*",
             "input": "apps/this-film-finder/public"
+          },
+          {
+            "glob": "**/*.svg",
+            "input": "node_modules/ionicons/dist/ionicons/svg",
+            "output": "./svg"
           }
         ],
-        "styles": ["apps/this-film-finder/src/styles.scss"],
+        "styles": [
+          "apps/this-film-finder/src/styles.scss",
+          "apps/this-film-finder/src/global.scss",
+          "apps/this-film-finder/src/themes/variables.scss"
+        ],
         "scripts": []
       },
       "configurations": {
