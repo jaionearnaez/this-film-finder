@@ -10,6 +10,8 @@ import {
   provideIonicAngular,
 } from '@ionic/angular/standalone';
 import { appRoutes } from './app.routes';
+import { environment } from '../environments/environment';
+import {MOVIES_API_BASE_URL} from '@movies-data-access/service/data-access.service'
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,5 +23,7 @@ export const appConfig: ApplicationConfig = {
       mode: 'md',
     }),
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: MOVIES_API_BASE_URL, useValue: environment.moviesApiBaseUrl },
+
   ],
 };
