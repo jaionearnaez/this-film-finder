@@ -1,0 +1,63 @@
+@baseUrl = https://0kadddxyh3.execute-api.us-east-1.amazonaws.com
+@token = PASTE_TOKEN_HERE
+
+# id examples
+@movieId = 399df9yAMsnin2II4HdEIw
+@genreId = 5qNaMXRbfQIK00NFmEQLwD
+
+
+###
+## get token
+# @name getToken
+GET {{baseUrl}}/auth/token
+Content-Type: application/json
+
+
+###
+## get token
+# @name healthcheck
+GET {{baseUrl}}/healthcheck
+Content-Type: application/json
+
+
+###
+## get movies by genre
+# @name movieGenres
+GET {{baseUrl}}/genres/movies?limit=3&page=2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+###
+## get movies
+# @name movies
+GET {{baseUrl}}/movies?limit=&page=&search=of the gal&genre=Action
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+## get movie details
+# @name movieDetail
+GET {{baseUrl}}/movies/{{movieId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+###
+## get movies titles
+# @name movieTitles
+GET {{baseUrl}}/movies/titles
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+
+###
+## get movies genre detail
+# @name movieGenreDetail
+GET {{baseUrl}}/movies/genres/{{genreId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
