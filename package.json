@@ -2,7 +2,10 @@
   "name": "@this-film-finder/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:this-film-finder": "nx run this-film-finder:serve",
+    "build:this-film-finder": "nx run this-film-finder:build --prod"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~18.0.0",
@@ -13,6 +16,8 @@
     "@angular/platform-browser": "~18.0.0",
     "@angular/platform-browser-dynamic": "~18.0.0",
     "@angular/router": "~18.0.0",
+    "@ionic/angular": "^8.2.5",
+    "@ngrx/store": "^18.0.1",
     "@nx/angular": "19.4.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -28,6 +33,7 @@
     "@angular/cli": "~18.0.0",
     "@angular/compiler-cli": "~18.0.0",
     "@angular/language-service": "~18.0.0",
+    "@ionic/angular-toolkit": "^11.0.1",
     "@nx/eslint": "19.4.3",
     "@nx/eslint-plugin": "19.4.3",
     "@nx/jest": "19.4.3",
