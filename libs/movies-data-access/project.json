@@ -1,0 +1,13 @@
+{
+  "name": "movies-data-access",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/movies-data-access/src",
+  "prefix": "movies-data-access",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
