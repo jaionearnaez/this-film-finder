@@ -13,7 +13,7 @@
         "outputPath": "dist/apps/this-film-finder",
         "index": "apps/this-film-finder/src/index.html",
         "browser": "apps/this-film-finder/src/main.ts",
-        "polyfills": ["zone.js"],
+        "polyfills": [],
         "tsConfig": "apps/this-film-finder/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
