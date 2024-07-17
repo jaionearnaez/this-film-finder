@@ -1,0 +1,13 @@
+{
+  "name": "login",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/feature-login/src",
+  "prefix": "this-film-finder-login",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  }
+}
