@@ -27,7 +27,7 @@ export class MoviesDataAccessService {
   private http = inject(HttpClient);
   private API_BASE_URL = inject(MOVIES_API_BASE_URL);
 
-  getToken(): Observable<string> {
+  getToken(): Observable<{ token: string }> {
     return this.http.get(`${this.API_BASE_URL}/auth/token`).pipe(
       map((resp) => {
         const validationResult = authSchema.safeParse(resp);
@@ -35,20 +35,20 @@ export class MoviesDataAccessService {
           // Handle validation errors
           throw new Error('Invalid response format');
         }
-        return validationResult.data.token;
+        return { token: validationResult.data.token };
       })
     );
   }
 
-  healthcheck(): Observable<boolean> {
+  healthcheck(): Observable<{ contentful: boolean }> {
     const finalUrl = `${this.API_BASE_URL}/healthcheck`;
     return this.http.get(finalUrl.toString()).pipe(
       map((resp) => {
         const validationResult = healthcheckSchema.safeParse(resp);
         if (!validationResult.success) {
-          return false;
+          return { contentful: false };
         }
-        return validationResult.data.contentful;
+        return { contentful: validationResult.data.contentful };
       })
     );
   }
@@ -79,12 +79,16 @@ export class MoviesDataAccessService {
     search,
     genre,
   }: {
-    page: number;
-    limit: number;
-    search: string;
-    genre: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+    genre?: string;
   }): Observable<MoviesResponse> {
-    const finalUrl = `${this.API_BASE_URL}/movies?limit=${limit}&page=${page}&search=${search}&genre=${genre}`;
+    const finalUrl = `${this.API_BASE_URL}/movies?limit=${
+      limit ? limit : ''
+    }&page=${page ? page : ''}&search=${search ? search : ''}&genre=${
+      genre ? genre : ''
+    }`;
     return this.http.get(finalUrl.toString()).pipe(
       map((resp) => {
         const validationResult = moviesResponseSchema.safeParse(resp);
