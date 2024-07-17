@@ -6,6 +6,7 @@ import { concatLatestFrom } from '@ngrx/operators';
 import { Router } from '@angular/router';
 
 import { Action, Store } from '@ngrx/store';
+import { MoviesDataAccessService } from '@movies-data-access/service/data-access.service';
 
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AuthActions, AuthFeatureState } from '../auth.state';
@@ -36,6 +37,20 @@ export class AuthEffects {
       })
     );
   });
+
+  healthcheckFailureNav$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.healthcheckFailure),
+        concatLatestFrom(() =>
+          this.store.select(AuthFeatureState.selectRedirectUrl)
+        ),
+        tap(([, url]) => {
+          this.router.navigate(['/api-not-contentful']);
+        })
+      ),
+    { dispatch: false }
+  );
 
 
   getToken$ = createEffect(() => {

@@ -18,4 +18,21 @@ export const appRoutes: Route[] = [
       },
     },
   },
+  {
+    path: 'api-not-contentful',
+    title: 'This Film Finder: API not contentful',
+    pathMatch: 'full',
+    loadComponent: () =>
+      import('./components/api-not-contenful.component').then(
+        (m) => m.ApiNotContenfulComponent
+      ),
+    data: {
+      showSideMenu: false,
+      showHeader: true,
+      showFooter: true,
+      menu: {
+        title: 'API not contentful',
+      },
+    },
+  },
 ];
