@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@movies-data-access/*": ["libs/movies-data-access/src/lib/*"]
+      "@movies-data-access/*": ["libs/movies-data-access/src/lib/*"],
+      "@this-film-finder/feature-auth/*": ["libs/feature-auth/src/lib/*"],
     }
   },
   "exclude": ["node_modules", "tmp"]
