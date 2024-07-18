@@ -62,20 +62,19 @@ export const appConfig: ApplicationConfig = {
     environment.providers,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: MOVIES_API_BASE_URL, useValue: environment.moviesApiBaseUrl },
-
-    // {
-    //   provide: APP_INITIALIZER,
-    //   useFactory: (store: Store) => {
-    //     return () => {
-    //       store.dispatch(AuthActions.healthcheck());
-    //       return store.select(AuthFeatureState.selectIsApiInitialized).pipe(
-    //         filter((ready) => !!ready),
-    //         take(1)
-    //       );
-    //     };
-    //   },
-    //   deps: [Store],
-    //   multi: true,
-    // },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (store: Store) => {
+        return () => {
+          store.dispatch(AuthActions.healthcheck());
+          return store.select(AuthFeatureState.selectIsApiInitialized).pipe(
+            filter((ready) => !!ready),
+            take(1)
+          );
+        };
+      },
+      deps: [Store],
+      multi: true,
+    },
   ],
 };

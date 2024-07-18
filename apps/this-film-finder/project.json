@@ -33,8 +33,10 @@
           "apps/this-film-finder/src/global.scss",
           "apps/this-film-finder/src/themes/variables.scss"
         ],
-        "scripts": []
+        "scripts": [],
+        "namedChunks": true
       },
+
       "configurations": {
         "production": {
           "budgets": [
@@ -49,7 +51,8 @@
               "maximumError": "4kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "namedChunks": true
         },
         "development": {
           "optimization": false,
