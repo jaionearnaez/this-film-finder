@@ -1,9 +1,0 @@
-[build]
-  publish = "dist/apps/this-film-finder/browser"
-  command = "npm run build:this-film-finder"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = true
