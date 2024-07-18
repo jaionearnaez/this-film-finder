@@ -6,7 +6,11 @@ import {
   IonRouterOutlet,
 } from '@ionic/angular/standalone';
 import { Store } from '@ngrx/store';
-import { selectShowFooter, selectShowHeader, selectUrl } from './selectors/router.selectors';
+import {
+  selectShowFooter,
+  selectShowHeader,
+  selectUrl,
+} from './selectors/router.selectors';
 
 @Component({
   standalone: true,
@@ -16,6 +20,8 @@ import { selectShowFooter, selectShowHeader, selectUrl } from './selectors/route
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ion-app>
+      <br />
+      <p>app component works</p>
       @if(showHeader()){
       <p>header1 here</p>
       }
