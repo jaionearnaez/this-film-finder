@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "start:this-film-finder": "nx run this-film-finder:serve",
-    "build:this-film-finder": "nx run this-film-finder:build --prod"
+    "build:this-film-finder": "nx run this-film-finder:build:production"
   },
   "private": true,
   "dependencies": {
