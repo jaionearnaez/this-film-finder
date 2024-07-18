@@ -21,7 +21,6 @@ import {
   template: `
     <ion-app>
       <br />
-      <p>app component works</p>
       @if(showHeader()){
       <p>header1 here</p>
       }
