@@ -1,8 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
+  input,
   Input,
+  Signal,
 } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,6 +17,8 @@ import {
   IonSpinner,
   IonTitle,
 } from '@ionic/angular/standalone';
+import { FeaturePaginationComponent } from '@this-film-finder/feature-pagination/components/feature-pagination.component';
+import { PaginationPipe } from '@this-film-finder/feature-pagination/pipes/pagination.pipe';
 import { MovieCardComponent } from '../components/movie-card.component';
 import { FilmsSignalStore } from '../store/films.signal-store';
 
@@ -29,32 +34,19 @@ import { FilmsSignalStore } from '../store/films.signal-store';
     IonButton,
     IonItem,
     IonSpinner,
+    FeaturePaginationComponent,
+    PaginationPipe,
   ],
   providers: [FilmsSignalStore],
   template: `
     <ion-content>
       <ion-title class="ion-padding">This films</ion-title>
-      <form [formGroup]="filtersForm" (submit)="sendForm()" class="ion-padding">
+      <form
+        [formGroup]="filtersForm"
+        (submit)="sendFiltersForm()"
+        class="ion-padding"
+      >
         <div class="filter-input-wrapper">
-          <ion-input
-            formControlName="page"
-            label="Page number"
-            label-placement="floating"
-            fill="outline"
-            placeholder="Enter page number"
-            clearInput="true"
-            type="number"
-          ></ion-input>
-          <ion-input
-            formControlName="limit"
-            label="Number of films per page"
-            label-placement="floating"
-            fill="outline"
-            placeholder="Enter number of films per page"
-            type="number"
-            clearInput="true"
-          ></ion-input>
-
           <ion-input
             formControlName="search"
             label="Search in title"
@@ -84,17 +76,30 @@ import { FilmsSignalStore } from '../store/films.signal-store';
       <ion-item>
         <ion-spinner name="dots"></ion-spinner>
       </ion-item>
-      } @else if(status()==='success'){ 
-        @if(movies().length>0){
+      } @else if(status()==='success'){ @if(movies().length>0){
           <div class="movies-finder__cards-wrapper">
             @for (movie of movies(); track movie.id) {
               <this-film-finder-film-card [movie]="movie" />
             }
           </div>
+      <div>
+        <this-film-finder-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="numberOfPages() ?? 0"
+          [limit]="currentLimit()"
+          [pagesToShow]="
+            {
+              currentPage: currentPage(),
+              totalNumberOfPages: numberOfPages() ?? 0
+            } | pagination : 5 : 4
+          "
+          (goToPage)="setNewPage($event)"
+          (changePageSize)="setNewLimit($event)"
+        />
+      </div>
         } @else {
           <p>No movies, try other filters</p>
-        } 
-      }@else if (status()==='error') {
+      } }@else if (status()==='error') {
         <p>An error has occurred. Please reload page</p>
       }
     </ion-content>
@@ -109,20 +114,22 @@ export class FilmListComponent {
 
   movies = this.#filmListStore.movies;
   status = this.#filmListStore.status;
+  numberOfPages = this.#filmListStore.numberOfPages;
 
   filtersForm = new FormGroup({
-    page: new FormControl<number | null>(null),
-    limit: new FormControl<number | null>(null),
     search: new FormControl<string | null>(''),
     genre: new FormControl<string | null>(''),
   });
 
-  @Input() set page(value: number | null) {
-    this.filtersForm.controls.page.setValue(value);
-  }
-  @Input() set limit(value: number | null) {
-    this.filtersForm.controls.limit.setValue(value);
-  }
+  page = input<number | undefined>();
+  currentPage = computed(() => {
+    return this.page() ?? 1;
+  });
+  limit = input<number | undefined>();
+  currentLimit: Signal<number> = computed(() => {
+    return this.limit() ?? 25;
+  });
+
   @Input() set search(value: string) {
     this.filtersForm.controls.search.setValue(value);
   }
@@ -130,15 +137,20 @@ export class FilmListComponent {
     this.filtersForm.controls.genre.setValue(value);
   }
 
-  sendForm() {
+  sendFiltersForm() {
     if (this.filtersForm.valid) {
-      // console.log(this.limit);
-      this.#filmListStore.loadMovies({
-        page: this.filtersForm.controls.page.value ?? undefined,
-        limit: this.filtersForm.controls.limit.value ?? undefined,
+      this.#filmListStore.setNewFilters({
         search: this.filtersForm.controls.search.value ?? undefined,
         genre: this.filtersForm.controls.genre.value ?? undefined,
       });
     }
   }
+
+  setNewPage(page: number) {
+    this.#filmListStore.setNewPage({ page });
+  }
+  setNewLimit(limit: number) {
+    this.#filmListStore.setNewLimit({ limit });
+  }
+
 }

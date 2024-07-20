@@ -11,19 +11,27 @@ import {
   withState,
 } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectQueryParams } from '@this-film-finder/feature-router/selectors/router.selectors';
+import { pipe, switchMap, tap } from 'rxjs';
 
 export interface FilmsState {
   status: 'idle' | 'loading' | 'success' | 'error';
   message: string;
   movies: Array<Movie>;
-  pagination: any;//_J change when pagination is done
+  numberOfPages: number | null; //_J change when pagination is done
+}
+export interface Filters {
+  page?: number;
+  limit?: number;
+  search?: string;
+  genre?: string;
 }
 const filmsInitialStatus: FilmsState = {
   status: 'idle',
   message: '',
   movies: [],
-  pagination: '',
+  numberOfPages: null,
 };
 
 export const FilmsSignalStore = signalStore(
@@ -32,8 +40,21 @@ export const FilmsSignalStore = signalStore(
     const moviesDataAccess = inject(MoviesDataAccessService);
     const activatedRoute = inject(ActivatedRoute);
     const router = inject(Router);
-    return {
-      loadMovies: rxMethod<{
+    const globalStore = inject(Store);
+    const currentQueryParams = globalStore.selectSignal(selectQueryParams);
+
+    const navigateNewFilters = (filters: Filters) => {
+        router.navigate([], {
+          relativeTo: activatedRoute,
+          queryParams: {
+            ...filters,
+          },
+          queryParamsHandling: 'merge',
+          onSameUrlNavigation: 'reload',
+        });
+    };
+
+    const loadMovies = rxMethod<{
         page?: number;
         limit?: number;
         search?: string;
@@ -42,23 +63,19 @@ export const FilmsSignalStore = signalStore(
         pipe(
           switchMap((filters) => {
             patchState(store, { status: 'loading' });
-
-            router.navigate([], {
-              relativeTo: activatedRoute,
-              queryParams: {
+          navigateNewFilters(filters);
+          return moviesDataAccess
+            .getMovies({
                 ...filters,
-              },
-              queryParamsHandling: 'merge',
-              onSameUrlNavigation: 'reload',
-            });
-
-            return moviesDataAccess.getMovies(filters).pipe(
+            })
+            .pipe(
               tapResponse({
                 next: (moviesInfo) => {
                   if (moviesInfo.data) {
                     patchState(store, {
                       status: 'success',
                       movies: moviesInfo.data,
+                      numberOfPages: moviesInfo.totalPages,
                     });
                   } else {
                     patchState(store, {
@@ -76,8 +93,66 @@ export const FilmsSignalStore = signalStore(
             );
           })
         )
-      ),
-    };
+    );
+
+    const setNewPage = rxMethod<{
+      page: number;
+    }>(
+      pipe(
+        tap(({ page }) => {
+          patchState(store, { status: 'loading' });
+          loadMovies({
+            ...currentQueryParams(),
+            page: page ?? undefined,
+          });
+        })
+      )
+    );
+
+    const setNewLimit = rxMethod<{
+      limit: number;
+    }>(
+      pipe(
+        tap(({ limit }) => {
+          patchState(store, { status: 'loading' });
+
+          loadMovies({
+            ...currentQueryParams(),
+            limit: limit ?? undefined,
+            page: undefined,
+          });
+        })
+      )
+    );
+
+    const setNewFilters = rxMethod<{
+      search: string | undefined;
+      genre: string | undefined;
+    }>(
+      pipe(
+        tap(({ search, genre }) => {
+          patchState(store, { status: 'loading' });
+          loadMovies({
+            ...currentQueryParams(),
+            page: undefined,
+            search,
+            genre: genre ?? undefined,
+          });
+        })
+      )
+    );
+
+    const clearFilters = rxMethod<void>(
+      pipe(
+        tap(() => {
+          patchState(store, { status: 'loading' });
+          loadMovies({});
+        })
+      )
+    );
+
+    return { loadMovies, setNewPage, setNewLimit, setNewFilters,
+      };
   }),
   withHooks({
     onInit: (store) => {

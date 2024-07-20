@@ -43,7 +43,6 @@ export const _authGuard = (
             return true;
           } else {
             if (redirectUrl === '') {
-              console.log('estoy aqui', currentPath);
               store.dispatch(
                 AuthActions.setRedirectUrl({ redirectUrl: currentPath })
               );
