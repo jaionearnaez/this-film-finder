@@ -12,6 +12,12 @@
         margin: 0;
       }
   }
+  .from-actions-wrapper{
+    display:flex;
+    gap:10px;
+    flex-direction: column;
+    width: 20%;
+  }
 
   .movies-finder {
     &__cards-wrapper {

@@ -67,8 +67,9 @@ import { FilmsSignalStore } from '../store/films.signal-store';
             type="string"
           ></ion-input>
         </div>
-        <div class="actions-wrapper" class="ion-padding-top">
+        <div class="from-actions-wrapper ion-padding-top">
           <ion-button type="submit">Filter</ion-button>
+          <ion-button (click)="clearAllFilters()">Crear all filters</ion-button>
         </div>
       </form>
 
@@ -77,11 +78,11 @@ import { FilmsSignalStore } from '../store/films.signal-store';
         <ion-spinner name="dots"></ion-spinner>
       </ion-item>
       } @else if(status()==='success'){ @if(movies().length>0){
-          <div class="movies-finder__cards-wrapper">
-            @for (movie of movies(); track movie.id) {
-              <this-film-finder-film-card [movie]="movie" />
-            }
-          </div>
+      <div class="movies-finder__cards-wrapper">
+        @for (movie of movies(); track movie.id) {
+        <this-film-finder-film-card [movie]="movie" />
+        }
+      </div>
       <div>
         <this-film-finder-pagination
           [currentPage]="currentPage()"
@@ -97,10 +98,10 @@ import { FilmsSignalStore } from '../store/films.signal-store';
           (changePageSize)="setNewLimit($event)"
         />
       </div>
-        } @else {
-          <p>No movies, try other filters</p>
+      } @else {
+      <p>No movies, try other filters</p>
       } }@else if (status()==='error') {
-        <p>An error has occurred. Please reload page</p>
+      <p>An error has occurred. Please reload page</p>
       }
     </ion-content>
   `,
@@ -153,4 +154,7 @@ export class FilmListComponent {
     this.#filmListStore.setNewLimit({ limit });
   }
 
+  clearAllFilters(){
+    this.#filmListStore.clearFilters()
+  }
 }

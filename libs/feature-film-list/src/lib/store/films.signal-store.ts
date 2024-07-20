@@ -27,6 +27,12 @@ export interface Filters {
   search?: string;
   genre?: string;
 }
+const filtersInitialStatus = {
+  page: null,
+  limit: null,
+  search: null,
+  genre: null,
+};
 const filmsInitialStatus: FilmsState = {
   status: 'idle',
   message: '',
@@ -44,6 +50,7 @@ export const FilmsSignalStore = signalStore(
     const currentQueryParams = globalStore.selectSignal(selectQueryParams);
 
     const navigateNewFilters = (filters: Filters) => {
+      if (Object.keys(filters).length) {
         router.navigate([], {
           relativeTo: activatedRoute,
           queryParams: {
@@ -52,21 +59,29 @@ export const FilmsSignalStore = signalStore(
           queryParamsHandling: 'merge',
           onSameUrlNavigation: 'reload',
         });
+      } else {
+        router.navigate([], {
+          relativeTo: activatedRoute,
+          queryParams: filtersInitialStatus,
+          queryParamsHandling: 'merge',
+          onSameUrlNavigation: 'reload',
+        });
+      }
     };
 
     const loadMovies = rxMethod<{
-        page?: number;
-        limit?: number;
-        search?: string;
-        genre?: string;
-      }>(
-        pipe(
-          switchMap((filters) => {
-            patchState(store, { status: 'loading' });
+      page?: number;
+      limit?: number;
+      search?: string;
+      genre?: string;
+    }>(
+      pipe(
+        switchMap((filters) => {
+          patchState(store, { status: 'loading' });
           navigateNewFilters(filters);
           return moviesDataAccess
             .getMovies({
-                ...filters,
+              ...filters,
             })
             .pipe(
               tapResponse({
@@ -91,8 +106,8 @@ export const FilmsSignalStore = signalStore(
                 },
               })
             );
-          })
-        )
+        })
+      )
     );
 
     const setNewPage = rxMethod<{
@@ -152,6 +167,7 @@ export const FilmsSignalStore = signalStore(
     );
 
     return { loadMovies, setNewPage, setNewLimit, setNewFilters,
+       clearFilters 
       };
   }),
   withHooks({
