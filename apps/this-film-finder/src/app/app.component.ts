@@ -10,12 +10,8 @@ import {
   AllowedThemes,
   AuthFeatureState,
 } from '@this-film-finder/feature-auth/auth.state';
+import { selectShowHeader } from '@this-film-finder/feature-router/selectors/router.selectors';
 import { ThisFilmFinderHeaderComponent } from './components/header.component';
-import {
-  selectShowFooter,
-  selectShowHeader,
-  selectUrl,
-} from '@this-film-finder/feature-router/selectors/router.selectors';
 
 @Component({
   standalone: true,
@@ -35,7 +31,6 @@ import {
       <this-film-finder-header
         [logo]="constructSrc(theme())"
         [name]="theme()"
-        [currentUrl]="currentUrl()"
       />
       }
       <ion-content>
@@ -48,10 +43,7 @@ export class AppComponent {
   private readonly store = inject(Store);
   title = 'this-film-finder';
 
-  currentUrl = this.store.selectSignal(selectUrl);
-  // isLoggedIn = this.store.selectSignal(AuthFeatureState.selectIsLoggedIn);
   showHeader = this.store.selectSignal(selectShowHeader);
-  showFooter = this.store.selectSignal(selectShowFooter);
   theme = this.store.selectSignal(AuthFeatureState.selectTheme);
 
   constructSrc(theme: AllowedThemes | null) {
