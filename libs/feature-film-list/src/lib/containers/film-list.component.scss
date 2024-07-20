@@ -4,27 +4,26 @@
   .filter-input-wrapper {
     display: flex;
     gap: 10px;
-    flex-direction: row;
+    flex-direction: column;
     margin-bottom: var(--form-field-separation);
     ion-input {
-        min-width: 20%;
-        max-width: 20%;
-        margin: 0;
-      }
+      min-width: 50%;
+      max-width: 50%;
+      margin: 0;
+    }
+  }
+  .from-actions-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 20%;
   }
 
   .movies-finder {
     &__cards-wrapper {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0px 0.25px;
-      margin: 0;
-
-      grid-template-columns: 1fr 1fr 1fr 1fr;
-      margin: 0 var(--safe-area);
-
-      box-sizing: border-box;
-      border-collapse: collapse;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
     }
   }
 }

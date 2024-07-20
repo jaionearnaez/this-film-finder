@@ -1,0 +1,38 @@
+:host {
+  margin: 10px;
+
+  .button-disabled.full-color {
+    opacity: 1;
+  }
+
+  .pagination {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    ion-input {
+      --padding-start: 10px;
+    }
+    .paginationButtons {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+    .paginationGoto {
+      display: flex;
+      flex-direction: row;
+      ion-label {
+        margin: 0;
+      }
+      ion-input {
+        --background: var(--ion-color-secondary);
+        &.goToPage {
+          width: 100px;
+          border-right: 1px #d1cbcf solid;
+        }
+        &.setPageSize {
+          width: 130px;
+        }
+      }
+    }
+  }
+}
