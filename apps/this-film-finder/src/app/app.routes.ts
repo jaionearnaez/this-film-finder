@@ -15,12 +15,8 @@ export const appRoutes: Route[] = [
         (m) => m.LoginComponent
       ),
     data: {
-      showSideMenu: true,
-      showHeader: true,
-      showFooter: true,
-      menu: {
+      showHeader: false,
         title: 'Login',
-      },
     },
   },
   {
@@ -32,12 +28,22 @@ export const appRoutes: Route[] = [
         (m) => m.ApiNotContenfulComponent
       ),
     data: {
-      showSideMenu: false,
+      showHeader: false,
+      title: 'API not contentful',
+    },
+  },
+  {
+    path: 'films',
+    title: 'This Film Finder: film finder',
+    loadChildren: () =>
+      import('@this-film-finder/feature-film-list/film-list.routes').then(
+        ({ featureFilmListRoutes }) => {
+          return featureFilmListRoutes;
+        }
+      ),
+    data: {
       showHeader: true,
-      showFooter: true,
-      menu: {
-        title: 'API not contentful',
-      },
+      title: 'Films',
     },
   },
 ];

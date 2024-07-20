@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  display: flex;
+
+  .card-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    ion-card {
+      width: 250px;
+      height: 500px;
+      --background-hover: var(--color-secondary-600);
+    }
+    &:hover {
+      ion-card {
+        background-color: var(--color-secondary-600);
+      }
+    }
+    .actions-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+  }
+}

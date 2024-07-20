@@ -1,0 +1,18 @@
+:host{
+    display:block;
+    overflow-y: scroll;
+    ion-button {
+        &.button--close {
+          width: auto;
+          position: absolute;
+          right: calc(0px - var(--s5));
+          top: calc(0px - var(--s8));
+          z-index: 2;
+          --padding-end: var(--s2);
+          ion-icon {
+            width: var(--s5);
+            height: var(--s5);
+          }
+        }
+      }
+}
