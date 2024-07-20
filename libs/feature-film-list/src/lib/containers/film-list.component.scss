@@ -1,0 +1,30 @@
+:host {
+  display: block;
+  // overflow-y: scroll;
+  .filter-input-wrapper {
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+    margin-bottom: var(--form-field-separation);
+    ion-input {
+        min-width: 20%;
+        max-width: 20%;
+        margin: 0;
+      }
+  }
+
+  .movies-finder {
+    &__cards-wrapper {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0px 0.25px;
+      margin: 0;
+
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      margin: 0 var(--safe-area);
+
+      box-sizing: border-box;
+      border-collapse: collapse;
+    }
+  }
+}

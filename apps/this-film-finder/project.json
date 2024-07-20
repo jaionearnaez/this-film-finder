@@ -18,6 +18,7 @@
         "inlineStyleLanguage": "scss",
         "assets": [
           "apps/this-film-finder/src/app/favicon.ico",
+          "apps/this-film-finder/src/assets",
           {
             "glob": "**/*",
             "input": "apps/this-film-finder/public"

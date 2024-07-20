@@ -17,6 +17,9 @@
     "paths": {
       "@movies-data-access/*": ["libs/movies-data-access/src/lib/*"],
       "@this-film-finder/feature-auth/*": ["libs/feature-auth/src/lib/*"],
+      "@this-film-finder/feature-film-list/*": [
+        "libs/feature-film-list/src/lib/*"
+      ],
       "@this-film-finder/feature-login/*": ["libs/feature-login/src/lib/*"]
     }
   },
