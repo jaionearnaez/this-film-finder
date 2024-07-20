@@ -1,4 +1,26 @@
-:host{
-    display: block;
 
+
+:host{
+  display:block;
+  overflow-y: scroll;
+  .card-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  
+    ion-card {
+      max-width: 600px;
+    }
+    .actions-wrapper{
+      display:flex;
+      justify-content: center;
+    }
+  }
+  .error-message{
+    display: block;
+    color: var(--color-error-contrast);
+    margin-top: var(--s);
+    max-width: var(--form-field-max-width);
+  }
 }

@@ -21,6 +21,8 @@ export type APIStatus =
   | 'contentful'
   | 'not-contentful';
 
+export type AllowedThemes = 'chicken' | 'egg';
+
 export interface AuthState {
   apiStatus: APIStatus;
   authStatus: AuthStatus;
@@ -28,6 +30,7 @@ export interface AuthState {
   token: string | undefined;
   errorMessage: string;
   redirectUrl: string;
+  theme: AllowedThemes | null;
 }
 
 export const initialState: AuthState = {
@@ -37,11 +40,13 @@ export const initialState: AuthState = {
   token: undefined,
   errorMessage: '',
   redirectUrl: '',
+  theme: null,
 };
 
 export const AuthActions = createActionGroup({
   source: 'Main Auth State',
   events: {
+    setTheme: props<{ theme: AllowedThemes }>(),
     healthcheck: emptyProps(),
     healthcheckSuccess: emptyProps(),
     healthcheckFailure: props<{ error: string }>(),
@@ -53,11 +58,6 @@ export const AuthActions = createActionGroup({
       error: string;
     }>(),
     setRedirectUrl: props<{ redirectUrl: string }>(),
-    // autoSetToken: emptyProps(),
-    // autoSetTokenSuccess: props<{
-    //   token: string;
-    // }>(),
-    // autoSetTokenFailure: emptyProps(),
   },
 });
 
@@ -65,6 +65,13 @@ export const AuthFeatureState = createFeature({
   name: 'auth',
   reducer: createReducer(
     initialState,
+    //_J TODO: CREATE NEW STATE FOR THEME
+    on(AuthActions.setTheme, (state, { theme }): AuthState => {
+      return {
+        ...state,
+        theme,
+      };
+    }),
     on(AuthActions.healthcheck, (state): AuthState => {
       return {
         ...state,
@@ -111,19 +118,6 @@ export const AuthFeatureState = createFeature({
     on(AuthActions.setRedirectUrl, (state, { redirectUrl }): AuthState => {
       return { ...state, redirectUrl };
     })
-    // on(
-    //   AuthActions.loggedOut,
-    //   AuthActions.logout,
-    //   AuthActions.autoLoginFailed,
-    //   AuthActions.tempAuthB2BLoginFailed,
-    //   AuthActions.logoutNotConfirmedUser,
-    //   (): AuthState => {
-    //     return {
-    //       ...initialState,
-    //       status: 'no-identified',
-    //     };
-    //   }
-    // ),
   ),
   extraSelectors: ({
     selectApiStatus,
@@ -148,9 +142,11 @@ export const AuthFeatureState = createFeature({
 
     selectAuthGuardInfo: createSelector(
       selectAuthStatus,
+      selectApiStatus,
       selectRedirectUrl,
-      (status, redirectUrl) => ({
-        status,
+      (authStatus, apiStatus, redirectUrl) => ({
+        authStatus,
+        apiStatus,
         redirectUrl,
       })
     ),

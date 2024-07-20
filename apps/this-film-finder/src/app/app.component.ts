@@ -7,6 +7,11 @@ import {
 } from '@ionic/angular/standalone';
 import { Store } from '@ngrx/store';
 import {
+  AllowedThemes,
+  AuthFeatureState,
+} from '@this-film-finder/feature-auth/auth.state';
+import { ThisFilmFinderHeaderComponent } from './components/header.component';
+import {
   selectShowFooter,
   selectShowHeader,
   selectUrl,
@@ -14,22 +19,27 @@ import {
 
 @Component({
   standalone: true,
-  imports: [IonRouterOutlet, IonButton, IonApp, IonContent],
+  imports: [
+    IonRouterOutlet,
+    IonButton,
+    IonApp,
+    IonContent,
+    ThisFilmFinderHeaderComponent,
+  ],
   selector: 'this-film-finder-root',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ion-app>
-      <br />
       @if(showHeader()){
-      <p>header1 here</p>
+      <this-film-finder-header
+        [logo]="constructSrc(theme())"
+        [name]="theme()"
+      />
       }
       <ion-content>
         <ion-router-outlet></ion-router-outlet>
       </ion-content>
-      @if(showFooter()){
-      <p>footer1 here</p>
-      }
     </ion-app>
   `,
 })
@@ -41,4 +51,13 @@ export class AppComponent {
   // isLoggedIn = this.store.selectSignal(AuthFeatureState.selectIsLoggedIn);
   showHeader = this.store.selectSignal(selectShowHeader);
   showFooter = this.store.selectSignal(selectShowFooter);
+  theme = this.store.selectSignal(AuthFeatureState.selectTheme);
+
+  constructSrc(theme: AllowedThemes | null) {
+    if (theme) {
+      return `assets/${theme}.svg`;
+    } else {
+      return '';
+    }
+  }
 }

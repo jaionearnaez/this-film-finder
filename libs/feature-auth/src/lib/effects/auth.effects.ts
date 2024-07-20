@@ -1,12 +1,12 @@
-import { LOCALE_ID, inject } from '@angular/core';
+import { inject } from '@angular/core';
 
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 
 import { Router } from '@angular/router';
 
-import { Action, Store } from '@ngrx/store';
 import { MoviesDataAccessService } from '@movies-data-access/service/data-access.service';
+import { Store } from '@ngrx/store';
 
 import { catchError, exhaustMap, map, of, tap } from 'rxjs';
 import { AuthActions, AuthFeatureState } from '../auth.state';
@@ -30,7 +30,9 @@ export class AuthEffects {
           }),
           catchError(({ error }) => {
             return of(
-              AuthActions.healthcheckFailure({ error: error.error.message })
+              AuthActions.healthcheckFailure({
+                error: error?.error?.message ? error?.error?.message : error,
+              })
             );
           })
         );
@@ -42,16 +44,12 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(AuthActions.healthcheckFailure),
-        concatLatestFrom(() =>
-          this.store.select(AuthFeatureState.selectRedirectUrl)
-        ),
-        tap(([, url]) => {
+        tap(() => {
           this.router.navigate(['/api-not-contentful']);
         })
       ),
     { dispatch: false }
   );
-
 
   getToken$ = createEffect(() => {
     return this.actions$.pipe(
@@ -85,7 +83,12 @@ export class AuthEffects {
           this.store.select(AuthFeatureState.selectRedirectUrl)
         ),
         tap(([, url]) => {
-          this.router.navigate([url || '/']);
+          if (url) {
+            const redirectUrl = this.router.parseUrl(url);
+            this.router.navigateByUrl(redirectUrl);
+          } else {
+            this.router.navigate(['/films']);
+          }
         })
       ),
     { dispatch: false }

@@ -1,5 +1,8 @@
 import { Route } from '@angular/router';
-
+import {
+  isAuthenticatedGuard,
+  isNotAuthenticatedGuard,
+} from '@this-film-finder/feature-auth/services/auth-guard.service';
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -9,6 +12,7 @@ export const appRoutes: Route[] = [
   {
     path: 'login',
     title: 'This Film Finder: login',
+    canMatch: [isNotAuthenticatedGuard],
     pathMatch: 'full',
     loadComponent: () =>
       import('@this-film-finder/feature-login/components/login.component').then(
@@ -16,7 +20,7 @@ export const appRoutes: Route[] = [
       ),
     data: {
       showHeader: false,
-        title: 'Login',
+      title: 'Login',
     },
   },
   {
@@ -35,6 +39,7 @@ export const appRoutes: Route[] = [
   {
     path: 'films',
     title: 'This Film Finder: film finder',
+    canMatch: [isAuthenticatedGuard],
     loadChildren: () =>
       import('@this-film-finder/feature-film-list/film-list.routes').then(
         ({ featureFilmListRoutes }) => {
