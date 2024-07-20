@@ -15,7 +15,7 @@ import {
   selectShowFooter,
   selectShowHeader,
   selectUrl,
-} from './selectors/router.selectors';
+} from '@this-film-finder/feature-router/selectors/router.selectors';
 
 @Component({
   standalone: true,
@@ -35,6 +35,7 @@ import {
       <this-film-finder-header
         [logo]="constructSrc(theme())"
         [name]="theme()"
+        [currentUrl]="currentUrl()"
       />
       }
       <ion-content>

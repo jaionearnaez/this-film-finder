@@ -23,7 +23,8 @@
       "@this-film-finder/feature-login/*": ["libs/feature-login/src/lib/*"],
       "@this-film-finder/feature-pagination/*": [
         "libs/feature-pagination/src/lib/*"
-      ]
+      ],
+      "@this-film-finder/feature-router/*": ["libs/feature-router/src/lib/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]
