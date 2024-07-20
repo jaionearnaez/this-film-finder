@@ -23,11 +23,10 @@ import {
         <ion-button
           fill="clear"
           (click)="doGoToPage(currentPage(), -1)"
-          [disabled]="currentPage() <= 1"
+          [disabled]="parseToNumber(currentPage()) <= 1"
         >
           <ion-icon name="chevron-back-outline"></ion-icon>
         </ion-button>
-
         @for (eachPageNumber of pagesToShow(); track $index) { @if ( $index > 0
         && pagesToShow()[$index] - pagesToShow()[$index - 1] > 1 ) {
         <ion-button class="full-color" disabled fill="clear">...</ion-button>
@@ -37,20 +36,19 @@ import {
           (click)="goToPage.emit(eachPageNumber)"
           fill="clear"
           [style.border]="
-            currentPage() === eachPageNumber
+          parseToNumber(currentPage()) === eachPageNumber
               ? '2px var(--ion-color-secondary) solid'
               : ''
           "
-          [disabled]="currentPage() === eachPageNumber"
+          [disabled]="parseToNumber(currentPage()) === eachPageNumber"
           >{{ eachPageNumber }}</ion-button
         >
         }
 
         <ion-button
-          [disabled]="currentPage() >= totalPages()"
+          [disabled]="parseToNumber(currentPage()) >= totalPages()"
           fill="clear"
           (click)="doGoToPage(currentPage(), +1)"
-
         >
           <ion-icon name="chevron-forward-outline"></ion-icon>
         </ion-button>
@@ -71,7 +69,7 @@ import {
             type="number"
             #gotoPageNumber
             (keyup.enter)="doGoToPage(gotoPageNumber.value ?? 1)"
-            [value]="currentPage()"
+            [value]="parseToNumber(currentPage())"
             enterkeyhint="go"
           >
           </ion-input>
@@ -98,6 +96,7 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeaturePaginationComponent {
+  console = console;
   currentPage = input.required<number>();
   totalPages = input.required<number>();
   limit = input.required<number>();
@@ -107,12 +106,12 @@ export class FeaturePaginationComponent {
   readonly goToPage = output<number>();
   readonly changePageSize = output<number>();
 
-  doGoToPage(_pageNumber: number | string, diff?:number) {
+  doGoToPage(_pageNumber: number | string, diff?: number) {
     const pageNumber: number =
       typeof _pageNumber === 'number' ? _pageNumber : Number(_pageNumber);
 
     if (pageNumber) {
-      this.goToPage.emit(pageNumber+(diff?diff:0));
+      this.goToPage.emit(pageNumber + (diff ? diff : 0));
     }
   }
 
@@ -123,5 +122,9 @@ export class FeaturePaginationComponent {
     if (pageSize) {
       this.changePageSize.emit(pageSize);
     }
+  }
+
+  parseToNumber(value: string | number): number {
+    return typeof value === 'number' ? value : Number(value);
   }
 }
