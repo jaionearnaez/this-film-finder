@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { inject, Injectable, InjectionToken } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import {
@@ -57,10 +57,12 @@ export class MoviesDataAccessService {
     page,
     limit,
   }: {
-    page: number;
-    limit: number;
+    page?: number;
+    limit?: number;
   }): Observable<MoviesByGenre> {
-    const finalUrl = `${this.API_BASE_URL}/genres/movies?limit=${limit}&page=${page}`;
+    const finalUrl = `${this.API_BASE_URL}/genres/movies?limit=${
+      limit ? limit : ''
+    }&page=${page ? page : ''}`;
     return this.http.get(finalUrl.toString()).pipe(
       map((resp) => {
         const validationResult = moviesByGenreSechma.safeParse(resp);
