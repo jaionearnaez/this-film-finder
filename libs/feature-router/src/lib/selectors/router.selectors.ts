@@ -15,19 +15,11 @@ export const {
   selectTitle: selectRouterTitle, // Select the title if available
 } = getRouterSelectors();
 
-// export const selectShowSideMenu = createSelector(
-//   selectRouteData,
-//   (data) => data?.['showSideMenu'],
-// );
-// export const selectIsSettingEnabled = createSelector(
-//   selectRouteData,
-//   (data) => data?.['isSettingEnabled'],
-// );
 
 export const selectShowHeader = createSelector(selectRouteData, (data) =>
   data?.['showHeader'] ? data?.['showHeader'] : false
 );
 
-export const selectShowFooter = createSelector(selectRouteData, (data) =>
-  data?.['showFooter'] ? data?.['showFooter'] : false
+export const selectTitle = createSelector(selectRouteData, (data) =>
+  data?.['title'] ? data?.['title'] : false
 );

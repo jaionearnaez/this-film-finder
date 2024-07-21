@@ -1,19 +1,34 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { IonHeader, IonItem, IonToolbar } from '@ionic/angular/standalone';
+import {
+  IonHeader,
+  IonItem,
+  IonTitle,
+  IonToolbar,
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'this-film-finder-header',
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonItem, RouterLink],
+  imports: [IonHeader, IonToolbar, IonItem, IonTitle, RouterLink],
   template: `
     <ion-header>
-      <ion-toolbar color="none" >
+      <ion-toolbar color="none">
         @if(!!logo()){
-        <ion-item lines="none" color="none" (click)="logoClicked.emit()">
-          <img
-            [src]="logo()"
-          />
+        <ion-item
+          title="Click to logout"
+          aria-label="Click to logout"
+          lines="none"
+          color="none"
+          (click)="logoClicked.emit()"
+        >
+          <img [src]="logo()" alt="Click to logout" />
+          <ion-title>{{ title() }}</ion-title>
         </ion-item>
         }
       </ion-toolbar>
@@ -24,6 +39,6 @@ import { IonHeader, IonItem, IonToolbar } from '@ionic/angular/standalone';
 })
 export class ThisFilmFinderHeaderComponent {
   logo = input.required<string | null>();
-  name = input.required<string | null>();
-  logoClicked = output<void>()
+  title = input.required<string | null>();
+  logoClicked = output<void>();
 }
