@@ -20,6 +20,7 @@ import { selectQueryParams } from '@this-film-finder/feature-router/selectors/ro
 import {
   catchError,
   expand,
+  map,
   Observable,
   of,
   pipe,
@@ -52,8 +53,8 @@ const filtersInitialStatus = {
 };
 const filmsInitialStatus: FilmsState = {
   status: 'idle',
-  filterStatus:'idle',
-  totalFilmsStatus:'idle',
+  filterStatus: 'idle',
+  totalFilmsStatus: 'idle',
   message: '',
   films: [],
   numberOfPages: null,
@@ -246,37 +247,12 @@ export const FilmsSignalStore = signalStore(
       search?: string;
       genre?: string;
     }): Observable<number> => {
-      let currentPage = 1;
       return moviesDataAccess
-        .getMovies({ page: currentPage, limit, search, genre })
+        .getMovies({ page: 1, limit: 1, search, genre })
         .pipe(
-          expand((response: MoviesResponse) => {
-            if (currentPage < response.totalPages) {
-              currentPage = response.totalPages;
-              return moviesDataAccess.getMovies({
-                limit,
-                search,
-                genre,
-                page: currentPage,
-              });
-            } else {
-              return of();
-            }
+          map((response: MoviesResponse) => {
+            return response.totalPages
           }),
-          reduce((acc: number, response: MoviesResponse, index) => {
-            if (response?.data) {
-              if (response.totalPages === 1) {
-                acc = response.data.length;
-              } else {
-                if (index === 1) {
-                  acc = response.data.length * response.totalPages;
-                } else {
-                  acc = acc + response.data.length;
-                }
-              }
-            }
-            return acc;
-          }, 0),
 
           catchError((error) => {
             return of(error);
@@ -296,6 +272,7 @@ export const FilmsSignalStore = signalStore(
           return fetchFilteredNumberOfFilms(filters).pipe(
             tapResponse({
               next: (numberOfMovies) => {
+                console.log(numberOfMovies);
                 patchState(store, {
                   totalFilmsStatus: 'success',
                   numberOfFilms: numberOfMovies,
