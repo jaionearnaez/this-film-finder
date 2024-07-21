@@ -26,39 +26,48 @@ export type AllowedThemes = 'chicken' | 'egg';
 export interface AuthState {
   apiStatus: APIStatus;
   authStatus: AuthStatus;
-  mustBeRemembered: boolean;
   token: string | undefined;
   errorMessage: string;
   redirectUrl: string;
   theme: AllowedThemes | null;
+  rememberMe: boolean;
 }
 
 export const initialState: AuthState = {
   apiStatus: 'not-checked',
   authStatus: 'not-initialized',
-  mustBeRemembered: false,
   token: undefined,
   errorMessage: '',
   redirectUrl: '',
   theme: null,
+  rememberMe: false,
 };
 
 export const AuthActions = createActionGroup({
   source: 'Main Auth State',
   events: {
-    setTheme: props<{ theme: AllowedThemes }>(),
-    login: props<{ theme: AllowedThemes }>(),
+    autoLogin: emptyProps(),
+    autoLoginWithToken: props<{
+      token: string;
+      rememberMe: boolean;
+      theme: AllowedThemes;
+    }>(),
+    autoLoginFailed: emptyProps(),
+    login: props<{ theme: AllowedThemes; rememberMe: boolean }>(),
     healthcheck: emptyProps(),
     healthcheckSuccess: emptyProps(),
     healthcheckFailure: props<{ error: string }>(),
-    getToken: emptyProps(),
+    // getToken: emptyProps(),
     getTokenSuccess: props<{
       token: string;
+      rememberMe: boolean;
+      theme: AllowedThemes;
     }>(),
     getTokenFailure: props<{
       error: string;
     }>(),
     setRedirectUrl: props<{ redirectUrl: string }>(),
+    logout: emptyProps(),
   },
 });
 
@@ -67,16 +76,14 @@ export const AuthFeatureState = createFeature({
   reducer: createReducer(
     initialState,
     //_J TODO: CREATE NEW STATE FOR THEME
-    on(
-      AuthActions.setTheme,
-      AuthActions.login,
-      (state, { theme }): AuthState => {
+    on(AuthActions.login, (state, { theme, rememberMe }): AuthState => {
       return {
         ...state,
         theme,
+        rememberMe,
+        authStatus: 'loading',
       };
-      }
-    ),
+    }),
     on(AuthActions.healthcheck, (state): AuthState => {
       return {
         ...state,
@@ -98,13 +105,6 @@ export const AuthFeatureState = createFeature({
         errorMessage: error,
       };
     }),
-    on(AuthActions.getToken, (state): AuthState => {
-      return {
-        ...state,
-        authStatus: 'loading',
-        errorMessage: '',
-      };
-    }),
     on(AuthActions.getTokenSuccess, (state, { token }): AuthState => {
       return {
         ...state,
@@ -120,8 +120,40 @@ export const AuthFeatureState = createFeature({
         errorMessage: error,
       };
     }),
+
+    on(
+      AuthActions.autoLoginWithToken,
+      (state, { token, rememberMe, theme }): AuthState => {
+        return {
+          ...state,
+          authStatus: 'token-success',
+          token,
+          errorMessage: '',
+          rememberMe,
+          theme,
+        };
+      }
+    ),
+    on(AuthActions.autoLoginFailed, (state): AuthState => {
+      return {
+        ...state,
+        authStatus: 'no-token',
+        token: '',
+        rememberMe: false,
+        theme: null,
+      };
+    }),
     on(AuthActions.setRedirectUrl, (state, { redirectUrl }): AuthState => {
       return { ...state, redirectUrl };
+    }),
+    on(AuthActions.logout, (state): AuthState => {
+      return {
+        ...state,
+        authStatus:'no-token',
+        errorMessage:'',
+        theme: null,
+        token:''
+      };
     })
   ),
   extraSelectors: ({
