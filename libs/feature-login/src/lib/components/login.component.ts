@@ -12,8 +12,10 @@ import {
   IonCardHeader,
   IonCardSubtitle,
   IonCardTitle,
+  IonCheckbox,
   IonCol,
   IonContent,
+  IonItem,
   IonRadio,
   IonRadioGroup,
   IonRow,
@@ -45,6 +47,8 @@ import { Observable, of } from 'rxjs';
     IonRadioGroup,
     IonRadio,
     IonButton,
+    IonCheckbox,
+    IonItem,
   ],
   template: `
     <ion-content>
@@ -63,13 +67,15 @@ import { Observable, of } from 'rxjs';
 
               <ion-card-content>
                 <form [formGroup]="loginForm" (submit)="sendForm()">
-                  <ion-radio-group formControlName="themeSelection">
-                    <ion-radio value="egg" label-placement="end">Egg</ion-radio>
-                    <br />
-                    <ion-radio value="chicken" label-placement="end"
-                      >Chicken</ion-radio
-                    ><br />
-                  </ion-radio-group>
+                  <ion-item>
+                    <ion-radio-group formControlName="themeSelection">
+                      <ion-radio value="egg" justify="start" label-placement="end">Egg</ion-radio>
+                      <br />
+                      <ion-radio value="chicken" justify="start" label-placement="end"
+                        >Chicken</ion-radio
+                      ><br />
+                    </ion-radio-group>
+                  </ion-item>
 
                   <span
                     *ngxControlError="
@@ -80,6 +86,14 @@ import { Observable, of } from 'rxjs';
                   >
                     <p>Just guess...</p>
                   </span>
+                  <ion-item lines="none">
+                    <ion-checkbox
+                      justify="start"
+                      label-placement="end"
+                      formControlName="rememberMe"
+                      >Remember me</ion-checkbox
+                    >
+                  </ion-item>
 
                   @if (this.authError().isError) {
                   <span class="error-message">
@@ -112,6 +126,7 @@ export class LoginComponent {
     themeSelection: new FormControl<AllowedThemes | null>(null, [
       Validators.required,
     ]),
+    rememberMe: new FormControl<boolean>(false),
   });
   authError = this.#store.selectSignal(AuthFeatureState.selectAuthError);
 
@@ -120,9 +135,12 @@ export class LoginComponent {
   sendForm() {
     this.loginForm.markAllAsTouched();
     if (this.loginForm.valid && this.loginForm.controls.themeSelection.value) {
-      this.#store.dispatch(AuthActions.login({
-        theme: this.loginForm.controls.themeSelection.value,
-      }))
+      this.#store.dispatch(
+        AuthActions.login({
+          theme: this.loginForm.controls.themeSelection.value,
+          rememberMe: this.loginForm.controls.rememberMe.value ?? false
+        })
+      );
     }
   }
 }
