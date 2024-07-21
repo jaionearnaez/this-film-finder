@@ -52,7 +52,7 @@ export const appRoutes: Route[] = [
       ),
     data: {
       showHeader: true,
-      title: 'Films',
+      title: 'This Film Finder',
     },
   },
 ];

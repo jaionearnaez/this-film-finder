@@ -11,7 +11,7 @@ import {
   AuthActions,
   AuthFeatureState,
 } from '@this-film-finder/feature-auth/auth.state';
-import { selectShowHeader } from '@this-film-finder/feature-router/selectors/router.selectors';
+import { selectShowHeader, selectTitle } from '@this-film-finder/feature-router/selectors/router.selectors';
 import { ThisFilmFinderHeaderComponent } from './components/header.component';
 
 @Component({
@@ -31,7 +31,7 @@ import { ThisFilmFinderHeaderComponent } from './components/header.component';
       @if(showHeader()){
       <this-film-finder-header
         [logo]="constructSrc(theme())"
-        [name]="theme()"
+        [title]="title()"
         (logoClicked)="logout()"
       />
       }
@@ -43,10 +43,11 @@ import { ThisFilmFinderHeaderComponent } from './components/header.component';
 })
 export class AppComponent {
   #store = inject(Store);
-  title = 'this-film-finder';
-
   showHeader = this.#store.selectSignal(selectShowHeader);
+  title = this.#store.selectSignal(selectTitle);
   theme = this.#store.selectSignal(AuthFeatureState.selectTheme);
+
+
 
   constructSrc(theme: AllowedThemes | null) {
     if (theme) {
