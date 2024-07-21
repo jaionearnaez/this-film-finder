@@ -1,5 +1,7 @@
 :host {
   display: block;
+  display:flex;
+  flex-direction: column;
   // overflow-y: scroll;
   .filter-input-wrapper {
     display: flex;
@@ -7,6 +9,11 @@
     flex-direction: column;
     margin-bottom: var(--form-field-separation);
     ion-input {
+      min-width: 50%;
+      max-width: 50%;
+      margin: 0;
+    }
+    ion-select {
       min-width: 50%;
       max-width: 50%;
       margin: 0;
@@ -19,7 +26,7 @@
     width: 20%;
   }
 
-  .movies-finder {
+  .films-finder {
     &__cards-wrapper {
       display: flex;
       flex-direction: row;

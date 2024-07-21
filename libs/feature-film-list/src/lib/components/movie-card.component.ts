@@ -44,25 +44,25 @@ import { FilmDetailComponent } from '../containers/film-detail.component';
   ],
   template: `
     <div class="card-container ion-padding">
-      <ion-card [id]="'open-modal-' + movie().id">
+      <ion-card [id]="'open-modal-' + film().id">
         <ion-row>
           <ion-col class="ion-padding">
             <ion-card-header>
-              <ion-card-title>{{ movie().title }} </ion-card-title>
+              <ion-card-title>{{ film().title }} </ion-card-title>
             </ion-card-header>
             <ion-card-content>
-              @defer (on viewport) { @if(movie().posterUrl){
-              <img [src]="movie().posterUrl" />
+              @defer (on viewport) { @if(film().posterUrl){
+              <img [src]="film().posterUrl" />
               }@else {
               <img src="assets/no-image.svg" />
               }
               <ion-modal
                 #movieModal
                 class="modal--movie"
-                [trigger]="'open-modal-' + movie().id"
+                [trigger]="'open-modal-' + film().id"
               >
                 <ng-template>
-                  <this-film-finder-film-detail [filmId]="movie().id" />
+                  <this-film-finder-film-detail [filmId]="film().id" />
                 </ng-template>
               </ion-modal>
               } @placeholder {
@@ -80,6 +80,6 @@ import { FilmDetailComponent } from '../containers/film-detail.component';
   styleUrl: './movie-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MovieCardComponent {
-  movie = input.required<Movie>();
+export class FilmCardComponent {
+  film = input.required<Movie>();
 }

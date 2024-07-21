@@ -14,12 +14,15 @@ import {
   IonContent,
   IonInput,
   IonItem,
+  IonList,
+  IonSelect,
+  IonSelectOption,
   IonSpinner,
   IonTitle,
 } from '@ionic/angular/standalone';
 import { FeaturePaginationComponent } from '@this-film-finder/feature-pagination/components/feature-pagination.component';
 import { PaginationPipe } from '@this-film-finder/feature-pagination/pipes/pagination.pipe';
-import { MovieCardComponent } from '../components/movie-card.component';
+import { FilmCardComponent } from '../components/movie-card.component';
 import { FilmsSignalStore } from '../store/films.signal-store';
 
 @Component({
@@ -27,7 +30,7 @@ import { FilmsSignalStore } from '../store/films.signal-store';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    MovieCardComponent,
+    FilmCardComponent,
     IonContent,
     IonTitle,
     IonInput,
@@ -36,6 +39,9 @@ import { FilmsSignalStore } from '../store/films.signal-store';
     IonSpinner,
     FeaturePaginationComponent,
     PaginationPipe,
+    IonSelect,
+    IonSelectOption,
+    IonList,
   ],
   providers: [FilmsSignalStore],
   template: `
@@ -46,7 +52,7 @@ import { FilmsSignalStore } from '../store/films.signal-store';
         (submit)="sendFiltersForm()"
         class="ion-padding"
       >
-        <div class="filter-input-wrapper">
+        <ion-list class="filter-input-wrapper">
           <ion-input
             formControlName="search"
             label="Search in title"
@@ -56,7 +62,28 @@ import { FilmsSignalStore } from '../store/films.signal-store';
             clearInput="true"
             type="string"
           ></ion-input>
+          @if(filterStatus()==='loading'){
+          <ion-spinner name="dots"></ion-spinner>
 
+          }@else if(filterStatus()==='success'){
+          <ion-select
+            formControlName="genre"
+            label="Genre"
+            label-placement="floating"
+            interface="popover"
+            fill="outline"
+            placeholder="Select a genre"
+            type="string"
+          >
+            @for(genre of genresForFiltering();track genre.id){
+            <p>{{ genre.title }}({{ genre.count }})</p>
+
+            <ion-select-option [value]="genre.title">{{
+              genre.title
+            }}</ion-select-option>
+            }
+          </ion-select>
+          }@else if(filterStatus()==='error'){
           <ion-input
             formControlName="genre"
             label="Genre"
@@ -66,7 +93,23 @@ import { FilmsSignalStore } from '../store/films.signal-store';
             clearInput="true"
             type="string"
           ></ion-input>
-        </div>
+
+          }
+        </ion-list>
+
+        <ion-item label="Number of videos">
+          @if(filterStatus()==='loading'){
+          <ion-spinner name="dots"></ion-spinner>
+
+          }@else if(filterStatus()==='success'){
+          <span>Number of videos: {{ numberOfFilms() }}</span>
+
+          }@else if(filterStatus()==='error'){
+          <span>--</span>
+
+          }
+        </ion-item>
+
         <div class="from-actions-wrapper ion-padding-top">
           <ion-button type="submit">Filter</ion-button>
           <ion-button (click)="clearAllFilters()">Clear all filters</ion-button>
@@ -77,10 +120,11 @@ import { FilmsSignalStore } from '../store/films.signal-store';
       <ion-item>
         <ion-spinner name="dots"></ion-spinner>
       </ion-item>
-      } @else if(status()==='success'){ @if(movies().length>0){
-      <div class="movies-finder__cards-wrapper">
-        @for (movie of movies(); track movie.id) {
-        <this-film-finder-film-card [movie]="movie" />
+      } @else if(status()==='success'){ @if(films().length>0){
+
+      <div class="films-finder__cards-wrapper">
+        @for (film of films(); track film.id) {
+        <this-film-finder-film-card [film]="film" />
         }
       </div>
       <div>
@@ -113,9 +157,12 @@ export class FilmListComponent {
   router = inject(Router);
   activatedRoute = inject(ActivatedRoute);
 
-  movies = this.#filmListStore.movies;
+  films = this.#filmListStore.films;
   status = this.#filmListStore.status;
   numberOfPages = this.#filmListStore.numberOfPages;
+  genresForFiltering = this.#filmListStore.genresForFiltering;
+  numberOfFilms = this.#filmListStore.numberOfFilms;
+  filterStatus = this.#filmListStore.filterStatus;
 
   filtersForm = new FormGroup({
     search: new FormControl<string | null>(''),
@@ -154,7 +201,7 @@ export class FilmListComponent {
     this.#filmListStore.setNewLimit({ limit });
   }
 
-  clearAllFilters(){
-    this.#filmListStore.clearFilters()
+  clearAllFilters() {
+    this.#filmListStore.clearFilters();
   }
 }

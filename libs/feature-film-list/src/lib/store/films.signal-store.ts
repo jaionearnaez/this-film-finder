@@ -1,7 +1,11 @@
 import { inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MoviesDataAccessService } from '@movies-data-access/service/data-access.service';
-import { Movie } from '@movies-data-access/validator/validators';
+import {
+  Movie,
+  MoviesByGenre,
+  MoviesResponse,
+} from '@movies-data-access/validator/validators';
 import { tapResponse } from '@ngrx/operators';
 import {
   patchState,
@@ -13,13 +17,26 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { selectQueryParams } from '@this-film-finder/feature-router/selectors/router.selectors';
-import { pipe, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  expand,
+  Observable,
+  of,
+  pipe,
+  reduce,
+  switchMap,
+  tap,
+} from 'rxjs';
 
 export interface FilmsState {
   status: 'idle' | 'loading' | 'success' | 'error';
+  filterStatus: 'idle' | 'loading' | 'success' | 'error';
+  totalFilmsStatus: 'idle' | 'loading' | 'success' | 'error';
   message: string;
-  movies: Array<Movie>;
-  numberOfPages: number | null; //_J change when pagination is done
+  films: Array<Movie>;
+  numberOfPages: number | null;
+  numberOfFilms: number | null;
+  genresForFiltering: Array<{ id: string; title: string; count: number }>;
 }
 export interface Filters {
   page?: number;
@@ -35,9 +52,13 @@ const filtersInitialStatus = {
 };
 const filmsInitialStatus: FilmsState = {
   status: 'idle',
+  filterStatus:'idle',
+  totalFilmsStatus:'idle',
   message: '',
-  movies: [],
+  films: [],
   numberOfPages: null,
+  numberOfFilms: null,
+  genresForFiltering: [],
 };
 
 export const FilmsSignalStore = signalStore(
@@ -48,6 +69,13 @@ export const FilmsSignalStore = signalStore(
     const router = inject(Router);
     const globalStore = inject(Store);
     const currentQueryParams = globalStore.selectSignal(selectQueryParams);
+
+    const initializeStore = () => {
+      loadFilms({
+        ...currentQueryParams(),
+      });
+      loadGenres();
+    };
 
     const navigateNewFilters = (filters: Filters) => {
       if (Object.keys(filters).length) {
@@ -69,7 +97,7 @@ export const FilmsSignalStore = signalStore(
       }
     };
 
-    const loadMovies = rxMethod<{
+    const loadFilms = rxMethod<{
       page?: number;
       limit?: number;
       search?: string;
@@ -79,6 +107,7 @@ export const FilmsSignalStore = signalStore(
         switchMap((filters) => {
           patchState(store, { status: 'loading' });
           navigateNewFilters(filters);
+          setNumberOfFilteredFilms(filters);
           return moviesDataAccess
             .getMovies({
               ...filters,
@@ -89,14 +118,14 @@ export const FilmsSignalStore = signalStore(
                   if (moviesInfo.data) {
                     patchState(store, {
                       status: 'success',
-                      movies: moviesInfo.data,
+                      films: moviesInfo.data,
                       numberOfPages: moviesInfo.totalPages,
                     });
                   } else {
                     patchState(store, {
                       status: 'error',
-                      movies: [],
-                      message: 'No movies available',
+                      films: [],
+                      message: 'No films available',
                     });
                   }
                 },
@@ -110,13 +139,189 @@ export const FilmsSignalStore = signalStore(
       )
     );
 
+    const fetchAllFilmsByGenre = (
+      limit: number
+    ): Observable<{ id: string; title: string; count: number }[]> => {
+      let currentPage = 1;
+      return moviesDataAccess
+        .getMoviesByGender({ page: currentPage, limit })
+        .pipe(
+          expand((response: MoviesByGenre) => {
+            if (currentPage < response.totalPages) {
+              currentPage++;
+              return moviesDataAccess.getMoviesByGender({
+                page: currentPage,
+                limit,
+              });
+            } else {
+              return of();
+            }
+          }),
+          reduce(
+            (
+              acc: Array<{ id: string; title: string; count: number }>[],
+              response: MoviesByGenre
+            ) => {
+              const genres: Array<{
+                id: string;
+                title: string;
+                count: number;
+              }> = [];
+              if (response) {
+                for (let i = 0; i < response.data.length; i++) {
+                  genres.push({
+                    id: response.data[i].id,
+                    title: response.data[i].title,
+                    count: response.data[i].movies.length,
+                  });
+                }
+                acc.push(genres);
+              }
+              return acc;
+            },
+            []
+          ),
+          switchMap(
+            (
+              allResponses: Array<{
+                id: string;
+                title: string;
+                count: number;
+              }>[]
+            ) => {
+              const flattenedFilms = allResponses.flatMap(
+                (response) => response
+              );
+              return of(flattenedFilms);
+            }
+          ),
+          catchError((error) => {
+            return of(error);
+          })
+        );
+    };
+
+    const loadGenres = rxMethod<void>(
+      pipe(
+        switchMap(() => {
+          patchState(store, { filterStatus: 'loading' });
+          return fetchAllFilmsByGenre(25).pipe(
+            tapResponse({
+              next: (genres) => {
+                if (genres.length > 0) {
+                  patchState(store, {
+                    filterStatus: 'success',
+                    genresForFiltering: genres,
+                  });
+                } else {
+                  patchState(store, {
+                    filterStatus: 'error',
+                    genresForFiltering: [],
+                    message: 'No genres available',
+                  });
+                }
+              },
+              error: (error) => {
+                console.error(error);
+                patchState(store, {
+                  status: 'error',
+                  genresForFiltering: [],
+                  message: 'No genres available',
+                });
+              },
+            })
+          );
+        })
+      )
+    );
+
+    const fetchFilteredNumberOfFilms = ({
+      page,
+      limit,
+      search,
+      genre,
+    }: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      genre?: string;
+    }): Observable<number> => {
+      let currentPage = 1;
+      return moviesDataAccess
+        .getMovies({ page: currentPage, limit, search, genre })
+        .pipe(
+          expand((response: MoviesResponse) => {
+            if (currentPage < response.totalPages) {
+              currentPage = response.totalPages;
+              return moviesDataAccess.getMovies({
+                limit,
+                search,
+                genre,
+                page: currentPage,
+              });
+            } else {
+              return of();
+            }
+          }),
+          reduce((acc: number, response: MoviesResponse, index) => {
+            if (response?.data) {
+              if (response.totalPages === 1) {
+                acc = response.data.length;
+              } else {
+                if (index === 1) {
+                  acc = response.data.length * response.totalPages;
+                } else {
+                  acc = acc + response.data.length;
+                }
+              }
+            }
+            return acc;
+          }, 0),
+
+          catchError((error) => {
+            return of(error);
+          })
+        );
+    };
+
+    const setNumberOfFilteredFilms = rxMethod<{
+      page?: number;
+      limit?: number;
+      search?: string;
+      genre?: string;
+    }>(
+      pipe(
+        switchMap((filters) => {
+          patchState(store, { totalFilmsStatus: 'loading' });
+          return fetchFilteredNumberOfFilms(filters).pipe(
+            tapResponse({
+              next: (numberOfMovies) => {
+                patchState(store, {
+                  totalFilmsStatus: 'success',
+                  numberOfFilms: numberOfMovies,
+                });
+              },
+              error: (error) => {
+                console.error(error);
+                patchState(store, {
+                  totalFilmsStatus: 'error',
+                  numberOfFilms: 0,
+                  message: 'No available count of films',
+                });
+              },
+            })
+          );
+        })
+      )
+    );
+
     const setNewPage = rxMethod<{
       page: number;
     }>(
       pipe(
         tap(({ page }) => {
           patchState(store, { status: 'loading' });
-          loadMovies({
+          loadFilms({
             ...currentQueryParams(),
             page: page ?? undefined,
           });
@@ -131,7 +336,7 @@ export const FilmsSignalStore = signalStore(
         tap(({ limit }) => {
           patchState(store, { status: 'loading' });
 
-          loadMovies({
+          loadFilms({
             ...currentQueryParams(),
             limit: limit ?? undefined,
             page: undefined,
@@ -147,7 +352,7 @@ export const FilmsSignalStore = signalStore(
       pipe(
         tap(({ search, genre }) => {
           patchState(store, { status: 'loading' });
-          loadMovies({
+          loadFilms({
             ...currentQueryParams(),
             page: undefined,
             search,
@@ -161,20 +366,23 @@ export const FilmsSignalStore = signalStore(
       pipe(
         tap(() => {
           patchState(store, { status: 'loading' });
-          loadMovies({});
+          loadFilms({});
         })
       )
     );
 
-    return { loadMovies, setNewPage, setNewLimit, setNewFilters,
-       clearFilters 
-      };
+    return {
+      loadFilms,
+      setNewPage,
+      setNewLimit,
+      setNewFilters,
+      clearFilters,
+      initializeStore,
+    };
   }),
   withHooks({
     onInit: (store) => {
-      const activatedRoute = inject(ActivatedRoute);
-      const filters = activatedRoute.snapshot.queryParams;
-      return store.loadMovies({ ...filters });
+      return store.initializeStore();
     },
   })
 );
