@@ -119,16 +119,10 @@ export class LoginComponent {
 
   sendForm() {
     this.loginForm.markAllAsTouched();
-    if (this.loginForm.valid) {
-      this.#store.dispatch(AuthActions.getToken());
-      if (this.loginForm.controls.themeSelection.value) {
-        this.#store.dispatch(
-          AuthActions.setTheme({
-            theme: this.loginForm.controls.themeSelection.value,
-          })
-        );
-      }
+    if (this.loginForm.valid && this.loginForm.controls.themeSelection.value) {
+      this.#store.dispatch(AuthActions.login({
+        theme: this.loginForm.controls.themeSelection.value,
+      }))
     }
-    console.log('do something else');
   }
 }

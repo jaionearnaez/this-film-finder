@@ -47,6 +47,7 @@ export const AuthActions = createActionGroup({
   source: 'Main Auth State',
   events: {
     setTheme: props<{ theme: AllowedThemes }>(),
+    login: props<{ theme: AllowedThemes }>(),
     healthcheck: emptyProps(),
     healthcheckSuccess: emptyProps(),
     healthcheckFailure: props<{ error: string }>(),
@@ -66,12 +67,16 @@ export const AuthFeatureState = createFeature({
   reducer: createReducer(
     initialState,
     //_J TODO: CREATE NEW STATE FOR THEME
-    on(AuthActions.setTheme, (state, { theme }): AuthState => {
+    on(
+      AuthActions.setTheme,
+      AuthActions.login,
+      (state, { theme }): AuthState => {
       return {
         ...state,
         theme,
       };
-    }),
+      }
+    ),
     on(AuthActions.healthcheck, (state): AuthState => {
       return {
         ...state,

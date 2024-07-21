@@ -53,7 +53,7 @@ export class AuthEffects {
 
   getToken$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(AuthActions.getToken),
+      ofType(AuthActions.getToken, AuthActions.login),
       exhaustMap(() => {
         return this.#moviesDataAccess.getToken().pipe(
           map(({ token }) => {
