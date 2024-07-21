@@ -21,7 +21,6 @@ export class StorageService {
 
   constructor(private _storage: Storage = localStorage) {
     this.#_isPersistent = this._storage === localStorage;
-    console.log('constructor ', this.#_PASSWDS);
   }
 
   async setItem<T>(
@@ -30,7 +29,6 @@ export class StorageService {
     storeName = this.#_defaultStoreName
   ): Promise<T> {
     const _keyphrase = await this.#_retrieveKeyPhrase(storeName);
-    console.log('this.#_retrieveKeyPhrase', _keyphrase);
 
     const encryptedValue = await this.#_encrypt(_value, _keyphrase);
     const key = await this.#_buildKey(_key, storeName);
@@ -80,7 +78,6 @@ export class StorageService {
         const pass = await calculateSHA256Hash(_p);
         await this._storage.setItem(key, pass);
         this.#_PASSWDS[storeName] = pass;
-        console.log('set new', this.#_PASSWDS);
 
         return pass;
       } else {

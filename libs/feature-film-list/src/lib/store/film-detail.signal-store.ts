@@ -30,7 +30,6 @@ export const FilmDetailSignalStore = signalStore(
           return moviesDataAccess.getMovieDetail({ id }).pipe(
             tapResponse({
               next: (movieDetails) => {
-                console.log(movieDetails)
                 if (movieDetails) {
                   patchState(store, {
                     status: 'success',
