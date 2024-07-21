@@ -99,7 +99,7 @@ import { FilmDetailSignalStore } from '../store/film-detail.signal-store';
 
               <ion-item>
                 <ion-label>
-                  <h4>Directors</h4>
+                  <h4>Directors:</h4>
                   <p>
                     {{ fromArrayToString({ array: filmDetails()?.directors }) }}
                   </p>
@@ -115,8 +115,6 @@ import { FilmDetailSignalStore } from '../store/film-detail.signal-store';
                 </ion-label>
               </ion-item>
             </ion-list>
-
-            <p>Genres: {{ getGenreTitles(filmDetails()?.genres) }}</p>
           </ion-card-content>
         </ion-col>
       </ion-row>
