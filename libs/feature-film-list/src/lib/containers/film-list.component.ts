@@ -12,6 +12,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonButton,
   IonContent,
+  IonFooter,
   IonInput,
   IonItem,
   IonList,
@@ -42,6 +43,7 @@ import { FilmsSignalStore } from '../store/films.signal-store';
     IonSelect,
     IonSelectOption,
     IonList,
+    IonFooter,
   ],
   providers: [FilmsSignalStore],
   template: `
@@ -148,6 +150,23 @@ import { FilmsSignalStore } from '../store/films.signal-store';
       <p>An error has occurred. Please reload page</p>
       }
     </ion-content>
+    <ion-footer>
+      <div>
+        <this-film-finder-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="numberOfPages() ?? 0"
+          [limit]="currentLimit()"
+          [pagesToShow]="
+            {
+              currentPage: currentPage(),
+              totalNumberOfPages: numberOfPages() ?? 0
+            } | pagination : 5 : 4
+          "
+          (goToPage)="setNewPage($event)"
+          (changePageSize)="setNewLimit($event)"
+        />
+      </div>
+    </ion-footer>
   `,
   styleUrl: './film-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
