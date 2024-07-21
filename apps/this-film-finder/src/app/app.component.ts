@@ -8,6 +8,7 @@ import {
 import { Store } from '@ngrx/store';
 import {
   AllowedThemes,
+  AuthActions,
   AuthFeatureState,
 } from '@this-film-finder/feature-auth/auth.state';
 import { selectShowHeader } from '@this-film-finder/feature-router/selectors/router.selectors';
@@ -31,6 +32,7 @@ import { ThisFilmFinderHeaderComponent } from './components/header.component';
       <this-film-finder-header
         [logo]="constructSrc(theme())"
         [name]="theme()"
+        (logoClicked)="logout()"
       />
       }
       <ion-content>
@@ -40,11 +42,11 @@ import { ThisFilmFinderHeaderComponent } from './components/header.component';
   `,
 })
 export class AppComponent {
-  private readonly store = inject(Store);
+  #store = inject(Store);
   title = 'this-film-finder';
 
-  showHeader = this.store.selectSignal(selectShowHeader);
-  theme = this.store.selectSignal(AuthFeatureState.selectTheme);
+  showHeader = this.#store.selectSignal(selectShowHeader);
+  theme = this.#store.selectSignal(AuthFeatureState.selectTheme);
 
   constructSrc(theme: AllowedThemes | null) {
     if (theme) {
@@ -53,4 +55,10 @@ export class AppComponent {
       return '';
     }
   }
+
+  logout(){
+    this.#store.dispatch(AuthActions.logout())
+  }
+
+
 }
