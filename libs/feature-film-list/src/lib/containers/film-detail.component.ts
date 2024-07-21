@@ -61,7 +61,11 @@ import { FilmDetailSignalStore } from '../store/film-detail.signal-store';
     <ion-card class="ion-padding">
       <ion-row>
         <ion-col class="ion-padding poster">
+          @if(filmDetails()?.posterUrl){
           <img [src]="filmDetails()?.posterUrl" />
+          }@else {
+          <img src="assets/no-image.svg" />
+          }
         </ion-col>
         <ion-col>
           <ion-card-content>
@@ -74,7 +78,7 @@ import { FilmDetailSignalStore } from '../store/film-detail.signal-store';
               <ion-item>
                 <ion-label>
                   <h4>Summary</h4>
-                  <p>{{ filmDetails()?.summary }}</p>
+                  <p>{{ filmDetails()?.summary ?? '-' }}</p>
                 </ion-label>
               </ion-item>
               <ion-item>
