@@ -30,6 +30,10 @@ import {
 } from '@this-film-finder/feature-auth/auth.state';
 import { authStoreProvider } from '@this-film-finder/feature-auth/feature-auth.provider';
 import { AuthInterceptor } from '@this-film-finder/feature-auth/services/auth.interceptor';
+import {
+  SessionStorageService,
+  StorageService,
+} from '@this-film-finder/feature-auth/services/storage.service';
 import { filter, take } from 'rxjs';
 import { environment } from '../environments/environment';
 import { appRoutes } from './app.routes';
@@ -62,6 +66,14 @@ export const appConfig: ApplicationConfig = {
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: MOVIES_API_BASE_URL, useValue: environment.moviesApiBaseUrl },
     {
+      provide: StorageService,
+      useFactory: () => new StorageService(),
+    },
+    {
+      provide: SessionStorageService,
+      useFactory: () => new StorageService(sessionStorage),
+    },
+    {
       provide: APP_INITIALIZER,
       useFactory: (store: Store) => {
         return () => {
@@ -70,6 +82,17 @@ export const appConfig: ApplicationConfig = {
             filter((ready) => !!ready),
             take(1)
           );
+        };
+      },
+      deps: [Store],
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (store: Store) => {
+        return () => {
+          store.dispatch(AuthActions.autoLogin());
+          return Promise.resolve;
         };
       },
       deps: [Store],

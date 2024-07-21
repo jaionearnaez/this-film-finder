@@ -3,6 +3,9 @@ import {
   isAuthenticatedGuard,
   isNotAuthenticatedGuard,
 } from '@this-film-finder/feature-auth/services/auth-guard.service';
+
+import { isApiNotContentful } from '@this-film-finder/feature-auth/services/contentful-guard.service';
+
 export const appRoutes: Route[] = [
   {
     path: '',
@@ -26,6 +29,7 @@ export const appRoutes: Route[] = [
   {
     path: 'api-not-contentful',
     title: 'This Film Finder: API not contentful',
+    canMatch: [isApiNotContentful],
     pathMatch: 'full',
     loadComponent: () =>
       import('./components/api-not-contenful.component').then(

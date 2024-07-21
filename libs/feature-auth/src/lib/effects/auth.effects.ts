@@ -8,14 +8,24 @@ import { Router } from '@angular/router';
 import { MoviesDataAccessService } from '@movies-data-access/service/data-access.service';
 import { Store } from '@ngrx/store';
 
-import { catchError, exhaustMap, map, of, tap } from 'rxjs';
-import { AuthActions, AuthFeatureState } from '../auth.state';
+import { catchError, exhaustMap, map, of, switchMap, tap } from 'rxjs';
+import { AllowedThemes, AuthActions, AuthFeatureState } from '../auth.state';
+import {
+  SessionStorageService,
+  StorageService,
+} from '../services/storage.service';
+import { selectUrl } from '@this-film-finder/feature-router/selectors/router.selectors';
+
 
 export class AuthEffects {
   actions$ = inject(Actions);
   router = inject(Router);
   store = inject(Store);
   #moviesDataAccess = inject(MoviesDataAccessService);
+
+  persistentStorage = inject(StorageService);
+  volatileStorage = inject(SessionStorageService);
+
   healthcheck$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(AuthActions.healthcheck),
@@ -51,14 +61,79 @@ export class AuthEffects {
     { dispatch: false }
   );
 
+  autoLogin$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(AuthActions.autoLogin),
+      switchMap(async () => {
+        const volatileToken = await this.volatileStorage.getItem<string>(
+          'CURRENT_TOKEN'
+        );
+        const volatileTheme = await this.volatileStorage.getItem<string>(
+          'CURRENT_THEME'
+        );
+        if (volatileToken) {
+          return {
+            token: volatileToken,
+            rememberMe: false,
+            theme: volatileTheme,
+          };
+        }
+
+        const persistentToken = await this.persistentStorage.getItem<string>(
+          'CURRENT_TOKEN'
+        );
+        const persistentTheme = await this.persistentStorage.getItem<string>(
+          'CURRENT_THEME'
+        );
+        if (persistentToken) {
+          return {
+            token: persistentToken,
+            rememberMe: true,
+            theme: persistentTheme,
+          };
+        }
+        return { token: null, rememberMe: false, theme: null };
+      }),
+      catchError(() => {
+        return of({ token: null, rememberMe: false, theme: null });
+      }),
+      map(({ token, rememberMe, theme }) =>
+        token
+          ? AuthActions.autoLoginWithToken({
+              token,
+              rememberMe,
+              theme: (theme as AllowedThemes) ?? 'egg',
+            })
+          : AuthActions.autoLoginFailed()
+      )
+    );
+  });
+
+  storeTokenOnLoginSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.getTokenSuccess),
+        tap(async ({ token, rememberMe, theme }) => {
+          const storage = rememberMe
+            ? this.persistentStorage
+            : this.volatileStorage;
+          await storage.setItem('CURRENT_TOKEN', token);
+          await storage.setItem('CURRENT_THEME', theme);
+        })
+      ),
+    { dispatch: false }
+  );
+
   getToken$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(AuthActions.getToken),
-      exhaustMap(() => {
+      ofType(AuthActions.login),
+      exhaustMap(({ rememberMe, theme }) => {
         return this.#moviesDataAccess.getToken().pipe(
           map(({ token }) => {
             return AuthActions.getTokenSuccess({
               token,
+              rememberMe,
+              theme,
             });
           }),
           catchError(({ error }) => {
@@ -92,5 +167,40 @@ export class AuthEffects {
         })
       ),
     { dispatch: false }
+  );
+
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(async () => {
+          await Promise.all([
+            this.persistentStorage.removeItem('CURRENT_TOKEN'),
+            this.volatileStorage.removeItem('CURRENT_TOKEN'),
+            this.persistentStorage.removeItem('CURRENT_THEME'),
+            this.volatileStorage.removeItem('CURRENT_THEME'),
+          ]);
+        })
+      ),
+    { dispatch: false }
+  );
+
+  logoutRememberCurrentNav$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.logout),
+      concatLatestFrom(() => this.store.select(selectUrl)),
+      map(([, redirectUrl]) => AuthActions.setRedirectUrl({ redirectUrl })),
+    ),
+  );
+
+  logoutNav$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(AuthActions.logout),
+        tap(() => {
+          this.router.navigate(['/login']);
+        }),
+      ),
+    { dispatch: false },
   );
 }

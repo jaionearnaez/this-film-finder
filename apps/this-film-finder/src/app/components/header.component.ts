@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IonHeader, IonItem, IonToolbar } from '@ionic/angular/standalone';
 
@@ -10,7 +10,7 @@ import { IonHeader, IonItem, IonToolbar } from '@ionic/angular/standalone';
     <ion-header>
       <ion-toolbar color="none" >
         @if(!!logo()){
-        <ion-item lines="none" color="none">
+        <ion-item lines="none" color="none" (click)="logoClicked.emit()">
           <img
             [src]="logo()"
           />
@@ -25,4 +25,5 @@ import { IonHeader, IonItem, IonToolbar } from '@ionic/angular/standalone';
 export class ThisFilmFinderHeaderComponent {
   logo = input.required<string | null>();
   name = input.required<string | null>();
+  logoClicked = output<void>()
 }
