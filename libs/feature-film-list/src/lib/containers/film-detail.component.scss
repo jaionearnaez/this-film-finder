@@ -1,18 +1,26 @@
-:host{
-    display:block;
-    overflow-y: scroll;
-    ion-button {
-        &.button--close {
-          width: auto;
-          position: absolute;
-          right: calc(0px - var(--s5));
-          top: calc(0px - var(--s8));
-          z-index: 2;
-          --padding-end: var(--s2);
-          ion-icon {
-            width: var(--s5);
-            height: var(--s5);
-          }
+:host {
+  display: block;
+  max-height: 100%;
+
+  ion-card {
+    max-height: 560px;
+    ion-row {
+      max-height: 560px;
+      ion-col {
+        max-height: 560px;
+        ion-card-content {
+          overflow-y: scroll;
+          max-height: 550px;
         }
       }
+    }
+    img {
+      max-height: 100%;
+    }
+  }
+}
+ion-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }

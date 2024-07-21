@@ -69,7 +69,7 @@ import { FilmsSignalStore } from '../store/films.signal-store';
         </div>
         <div class="from-actions-wrapper ion-padding-top">
           <ion-button type="submit">Filter</ion-button>
-          <ion-button (click)="clearAllFilters()">Crear all filters</ion-button>
+          <ion-button (click)="clearAllFilters()">Clear all filters</ion-button>
         </div>
       </form>
 

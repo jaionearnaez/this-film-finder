@@ -62,7 +62,7 @@ import { FilmDetailComponent } from '../containers/film-detail.component';
                 [trigger]="'open-modal-' + movie().id"
               >
                 <ng-template>
-                  <this-film-finder-film-detail />
+                  <this-film-finder-film-detail [filmId]="movie().id" />
                 </ng-template>
               </ion-modal>
               } @placeholder {
