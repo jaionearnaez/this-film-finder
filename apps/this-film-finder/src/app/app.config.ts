@@ -87,5 +87,16 @@ export const appConfig: ApplicationConfig = {
       deps: [Store],
       multi: true,
     },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (store: Store) => {
+        return () => {
+          store.dispatch(AuthActions.autoLogin());
+          return Promise.resolve;
+        };
+      },
+      deps: [Store],
+      multi: true,
+    },
   ],
 };
