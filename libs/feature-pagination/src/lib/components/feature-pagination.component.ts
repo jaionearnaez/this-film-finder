@@ -54,13 +54,19 @@ import {
         </ion-button>
       </div>
       <div class="paginationGoto">
-        <ion-item lines="none" [style.border-right]="'1px #D1CBCF solid'">
+      <ion-item lines="none" [style.border-right]="'1px #D1CBCF solid'">
           <ion-label>
             <h3>Page Count</h3>
             <p>{{ totalPages() }}</p></ion-label
           >
         </ion-item>
-        <ion-item>
+        <ion-item lines="none">
+          <ion-label>
+            <h3>Total Videos</h3>
+            <p>{{ totalFilms() }}</p></ion-label
+          >
+        </ion-item>
+        <ion-item lines="none">
           <ion-input
             class="goToPage"
             fill="solid"
@@ -75,7 +81,7 @@ import {
           </ion-input>
         </ion-item>
 
-        <ion-item>
+        <ion-item lines="none">
           <ion-input
             class="setPageSize"
             fill="solid"
@@ -100,6 +106,7 @@ export class FeaturePaginationComponent {
   currentPage = input.required<number>();
   totalPages = input.required<number>();
   limit = input.required<number>();
+  totalFilms = input.required<number>();
 
   pagesToShow = input<Array<number>>([]);
 

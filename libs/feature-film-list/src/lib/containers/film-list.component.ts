@@ -99,19 +99,6 @@ import { FilmsSignalStore } from '../store/films.signal-store';
           }
         </ion-list>
 
-        <ion-item label="Number of videos">
-          @if(filterStatus()==='loading'){
-          <ion-spinner name="dots"></ion-spinner>
-
-          }@else if(filterStatus()==='success'){
-          <span>Number of videos: {{ numberOfFilms() }}</span>
-
-          }@else if(filterStatus()==='error'){
-          <span>--</span>
-
-          }
-        </ion-item>
-
         <div class="from-actions-wrapper ion-padding-top">
           <ion-button type="submit">Filter</ion-button>
           <ion-button (click)="clearAllFilters()">Clear all filters</ion-button>
@@ -129,21 +116,6 @@ import { FilmsSignalStore } from '../store/films.signal-store';
         <this-film-finder-film-card [film]="film" />
         }
       </div>
-      <div>
-        <this-film-finder-pagination
-          [currentPage]="currentPage()"
-          [totalPages]="numberOfPages() ?? 0"
-          [limit]="currentLimit()"
-          [pagesToShow]="
-            {
-              currentPage: currentPage(),
-              totalNumberOfPages: numberOfPages() ?? 0
-            } | pagination : 5 : 4
-          "
-          (goToPage)="setNewPage($event)"
-          (changePageSize)="setNewLimit($event)"
-        />
-      </div>
       } @else {
       <p>No movies, try other filters</p>
       } }@else if (status()==='error') {
@@ -155,12 +127,13 @@ import { FilmsSignalStore } from '../store/films.signal-store';
         <this-film-finder-pagination
           [currentPage]="currentPage()"
           [totalPages]="numberOfPages() ?? 0"
+          [totalFilms]="numberOfFilms() ?? 0"
           [limit]="currentLimit()"
           [pagesToShow]="
             {
               currentPage: currentPage(),
               totalNumberOfPages: numberOfPages() ?? 0
-            } | pagination : 5 : 4
+            } | pagination : 2 : 2
           "
           (goToPage)="setNewPage($event)"
           (changePageSize)="setNewLimit($event)"
