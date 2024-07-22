@@ -6,7 +6,7 @@ import { AuthFeatureState } from '../auth.state';
 
 export function AuthInterceptor(
   req: HttpRequest<unknown>,
-  next: HttpHandlerFn,
+  next: HttpHandlerFn
 ) {
   const store = inject(Store);
 
@@ -23,6 +23,6 @@ export function AuthInterceptor(
       }
 
       return next(clonedRequest);
-    }),
+    })
   );
 }

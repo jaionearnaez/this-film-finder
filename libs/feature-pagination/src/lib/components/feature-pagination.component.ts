@@ -36,7 +36,7 @@ import {
           (click)="goToPage.emit(eachPageNumber)"
           fill="clear"
           [style.border]="
-          parseToNumber(currentPage()) === eachPageNumber
+            parseToNumber(currentPage()) === eachPageNumber
               ? '2px var(--ion-color-secondary) solid'
               : ''
           "
@@ -54,7 +54,7 @@ import {
         </ion-button>
       </div>
       <div class="paginationGoto">
-      <ion-item lines="none" [style.border-right]="'1px #D1CBCF solid'">
+        <ion-item lines="none" [style.border-right]="'1px #D1CBCF solid'">
           <ion-label>
             <h3>Page Count</h3>
             <p>{{ totalPages() }}</p></ion-label

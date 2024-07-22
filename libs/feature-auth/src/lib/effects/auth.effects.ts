@@ -8,14 +8,13 @@ import { Router } from '@angular/router';
 import { MoviesDataAccessService } from '@movies-data-access/service/data-access.service';
 import { Store } from '@ngrx/store';
 
+import { selectUrl } from '@this-film-finder/feature-router/selectors/router.selectors';
 import { catchError, exhaustMap, map, of, switchMap, tap } from 'rxjs';
 import { AllowedThemes, AuthActions, AuthFeatureState } from '../auth.state';
 import {
   SessionStorageService,
   StorageService,
 } from '../services/storage.service';
-import { selectUrl } from '@this-film-finder/feature-router/selectors/router.selectors';
-
 
 export class AuthEffects {
   actions$ = inject(Actions);
@@ -189,8 +188,8 @@ export class AuthEffects {
     this.actions$.pipe(
       ofType(AuthActions.logout),
       concatLatestFrom(() => this.store.select(selectUrl)),
-      map(([, redirectUrl]) => AuthActions.setRedirectUrl({ redirectUrl })),
-    ),
+      map(([, redirectUrl]) => AuthActions.setRedirectUrl({ redirectUrl }))
+    )
   );
 
   logoutNav$ = createEffect(
@@ -199,8 +198,8 @@ export class AuthEffects {
         ofType(AuthActions.logout),
         tap(() => {
           this.router.navigate(['/login']);
-        }),
+        })
       ),
-    { dispatch: false },
+    { dispatch: false }
   );
 }
