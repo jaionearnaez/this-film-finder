@@ -16,22 +16,22 @@ import { ThisFilmFinderHeaderComponent } from './components/header.component';
   standalone: true,
   imports: [IonRouterOutlet, IonApp, IonContent, ThisFilmFinderHeaderComponent],
   selector: 'this-film-finder-root',
-  styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <ion-app>
-      @if(showHeader()){
-      <this-film-finder-header
-        [logo]="constructSrc(theme())"
-        [title]="title()"
-        (logoClicked)="logout()"
-      />
-      }
       <ion-content>
+        @if(showHeader()){
+        <this-film-finder-header
+          [logo]="constructSrc(theme())"
+          [title]="title()"
+          (logoClicked)="logout()"
+        />
+        }
         <ion-router-outlet></ion-router-outlet>
       </ion-content>
     </ion-app>
   `,
+  styleUrl: './app.component.scss',
 })
 export class AppComponent {
   #store = inject(Store);

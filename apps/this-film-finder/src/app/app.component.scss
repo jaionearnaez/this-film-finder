@@ -1,0 +1,10 @@
+:host {
+  ion-app {
+    display: flex;
+    align-items: center;
+
+    ion-content {
+      max-width: 1700px;
+    }
+  }
+}
