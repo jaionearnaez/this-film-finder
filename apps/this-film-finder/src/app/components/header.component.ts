@@ -4,7 +4,6 @@ import {
   input,
   output,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import {
   IonHeader,
   IonItem,
@@ -15,7 +14,7 @@ import {
 @Component({
   selector: 'this-film-finder-header',
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonItem, IonTitle, RouterLink],
+  imports: [IonHeader, IonToolbar, IonItem, IonTitle],
   template: `
     <ion-header>
       <ion-toolbar color="none">

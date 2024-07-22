@@ -8,7 +8,7 @@ export const featureFilmListRoutes: Route[] = [
         path: '',
         loadComponent: () =>
           import('./containers/film-list.component').then(
-            (m) => m.FilmListComponent,
+            (m) => m.FilmListComponent
           ),
         data: {
           menu: {
@@ -24,5 +24,3 @@ export const featureFilmListRoutes: Route[] = [
     ],
   },
 ];
-
-

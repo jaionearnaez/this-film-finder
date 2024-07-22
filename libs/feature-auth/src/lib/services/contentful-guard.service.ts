@@ -6,10 +6,10 @@ import { filter, map } from 'rxjs';
 import { APIStatus, AuthFeatureState, isApiInitialized } from '../auth.state';
 
 export const _contentfulGuard = (
-  guardForContentful?: boolean): Observable<boolean | UrlTree> => {
+  guardForContentful?: boolean
+): Observable<boolean | UrlTree> => {
   const store = inject(Store);
   const router = inject(Router);
-
 
   return store.select(AuthFeatureState.selectAuthGuardInfo).pipe(
     filter(({ apiStatus }) => isApiInitialized(apiStatus)),
@@ -18,16 +18,16 @@ export const _contentfulGuard = (
         return true;
       }
       if (guardForContentful) {
-        if(apiStatus === 'not-contentful'){
+        if (apiStatus === 'not-contentful') {
           return router.createUrlTree(['/api-not-contentful']);
-        }else{
-          return true
+        } else {
+          return true;
         }
       } else {
-        if(apiStatus === 'contentful'){
+        if (apiStatus === 'contentful') {
           return router.createUrlTree(['/login']);
-        }else{
-          return true
+        } else {
+          return true;
         }
       }
     })
@@ -45,4 +45,3 @@ export const isApiNotContentful: CanMatchFn = (): Observable<
 > => {
   return _contentfulGuard(false);
 };
-

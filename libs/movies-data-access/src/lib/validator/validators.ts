@@ -17,7 +17,7 @@ export const genreSchema = z.object({
     })
   ),
 });
-export type GenreSchema = z.infer<typeof genreSchema>
+export type GenreSchema = z.infer<typeof genreSchema>;
 
 export const moviesByGenreSechma = z.object({
   data: z.array(genreSchema),

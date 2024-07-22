@@ -40,15 +40,15 @@ import { Observable, of } from 'rxjs';
     IonCard,
     IonRow,
     IonCol,
-    IonCardHeader,
-    IonCardSubtitle,
-    IonCardTitle,
     IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonItem,
     IonRadioGroup,
     IonRadio,
     IonButton,
     IonCheckbox,
-    IonItem,
   ],
   template: `
     <ion-content>
@@ -69,9 +69,17 @@ import { Observable, of } from 'rxjs';
                 <form [formGroup]="loginForm" (submit)="sendForm()">
                   <ion-item>
                     <ion-radio-group formControlName="themeSelection">
-                      <ion-radio value="egg" justify="start" label-placement="end">Egg</ion-radio>
+                      <ion-radio
+                        value="egg"
+                        justify="start"
+                        label-placement="end"
+                        >Egg</ion-radio
+                      >
                       <br />
-                      <ion-radio value="chicken" justify="start" label-placement="end"
+                      <ion-radio
+                        value="chicken"
+                        justify="start"
+                        label-placement="end"
                         >Chicken</ion-radio
                       ><br />
                     </ion-radio-group>
@@ -138,7 +146,7 @@ export class LoginComponent {
       this.#store.dispatch(
         AuthActions.login({
           theme: this.loginForm.controls.themeSelection.value,
-          rememberMe: this.loginForm.controls.rememberMe.value ?? false
+          rememberMe: this.loginForm.controls.rememberMe.value ?? false,
         })
       );
     }

@@ -149,10 +149,10 @@ export const AuthFeatureState = createFeature({
     on(AuthActions.logout, (state): AuthState => {
       return {
         ...state,
-        authStatus:'no-token',
-        errorMessage:'',
+        authStatus: 'no-token',
+        errorMessage: '',
         theme: null,
-        token:''
+        token: '',
       };
     })
   ),

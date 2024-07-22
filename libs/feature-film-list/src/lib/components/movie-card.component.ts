@@ -1,19 +1,11 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import {
-  IonButton,
   IonCard,
   IonCardContent,
   IonCardHeader,
   IonCardTitle,
   IonCol,
-  IonContent,
-  IonIcon,
-  IonItem,
-  IonLabel,
-  IonList,
   IonModal,
-  IonPopover,
   IonRow,
   IonSkeletonText,
 } from '@ionic/angular/standalone';
@@ -26,21 +18,13 @@ import { FilmDetailComponent } from '../containers/film-detail.component';
   imports: [
     FilmDetailComponent,
     IonCard,
-    IonLabel,
-    IonCardContent,
-    IonCardTitle,
-    IonButton,
-    IonIcon,
-    IonPopover,
-    IonContent,
-    IonList,
-    IonItem,
-    IonSkeletonText,
-    IonModal,
-    DatePipe,
-    IonRow,
     IonCol,
+    IonRow,
     IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
+    IonModal,
+    IonSkeletonText,
   ],
   template: `
     <div class="card-container ion-padding">

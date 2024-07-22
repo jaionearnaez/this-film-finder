@@ -251,7 +251,7 @@ export const FilmsSignalStore = signalStore(
         .getMovies({ page: 1, limit: 1, search, genre })
         .pipe(
           map((response: MoviesResponse) => {
-            return response.totalPages
+            return response.totalPages;
           }),
 
           catchError((error) => {
@@ -272,7 +272,6 @@ export const FilmsSignalStore = signalStore(
           return fetchFilteredNumberOfFilms(filters).pipe(
             tapResponse({
               next: (numberOfMovies) => {
-                console.log(numberOfMovies);
                 patchState(store, {
                   totalFilmsStatus: 'success',
                   numberOfFilms: numberOfMovies,
