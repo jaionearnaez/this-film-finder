@@ -38,6 +38,7 @@ import { filter, take } from 'rxjs';
 import { environment } from '../environments/environment';
 import { appRoutes } from './app.routes';
 import * as LogEffects from './store/log.effects';
+import { provideClientHydration } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -51,6 +52,7 @@ export const appConfig: ApplicationConfig = {
         canceledNavigationResolution: 'replace',
       })
     ),
+    provideClientHydration(),
     provideExperimentalZonelessChangeDetection(),
     provideHttpClient(withFetch(), withInterceptors([AuthInterceptor])),
     provideAnimationsAsync(),

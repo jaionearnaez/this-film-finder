@@ -13,11 +13,11 @@
         "outputPath": "dist/apps/this-film-finder",
         "index": "apps/this-film-finder/src/index.html",
         "browser": "apps/this-film-finder/src/main.ts",
+        "server": "apps/this-film-finder/src/main.server.ts",
         "polyfills": [],
         "tsConfig": "apps/this-film-finder/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
-          "apps/this-film-finder/src/app/favicon.ico",
           "apps/this-film-finder/src/assets",
           {
             "glob": "**/*",
@@ -52,6 +52,10 @@
               "maximumError": "4kb"
             }
           ],
+          "allowedCommonJsDependencies": [
+          "mock-local-storage"
+        ],
+          "appShell": true,
           "outputHashing": "all",
           "optimization": {
             "styles": {
