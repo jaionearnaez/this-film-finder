@@ -272,7 +272,6 @@ export const FilmsSignalStore = signalStore(
           return fetchFilteredNumberOfFilms(filters).pipe(
             tapResponse({
               next: (numberOfMovies) => {
-                console.log(numberOfMovies);
                 patchState(store, {
                   totalFilmsStatus: 'success',
                   numberOfFilms: numberOfMovies,
